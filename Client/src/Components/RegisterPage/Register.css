@@ -1,0 +1,124 @@
+.register-page-main{
+    background-color:#1c8989;
+    width:80vw;
+    height: 90vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: url('./register-icon-bg2.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position-y: -10rem;
+    background-position-x: 5rem;
+
+}
+
+
+
+.form-page-register{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 11.5em;
+    
+   
+    
+}
+.Sign-in-heading-register{
+    color:#ffebcd;
+    font-family: sans-serif;
+    font-weight: bold;
+    font-size:x-large;
+}
+input[type="text"]{
+    background-image: url('./user-icon.png'); /* Replace with your icon URL */
+    background-repeat: no-repeat;
+    background-position: left 10px center;
+    background-size: 4em; 
+    height: 3em;
+    width:20em;
+    padding-left:5em;
+    border-radius: 50px;
+    border: 1px solid black;
+}
+input[type="email"]{
+    background-image: url('./user-icon.png'); 
+    background-repeat: no-repeat;
+    background-position: left 10px center;
+    background-size: 3em; 
+    height: 3em;
+    width:20em;
+    border-radius: 50px;
+    padding-left:4em;
+    border: 1px solid black;
+}
+
+input[type="password"]{
+    background-image: url('./password-icon.png'); 
+    background-repeat: no-repeat;
+    background-position: left 10px center;
+    background-size: 3em; 
+    height: 3em;
+    width:20em;
+    border-radius: 50px;
+    padding-left:4em;
+    border: 1px solid black;
+}
+.sign-up-btn-register{
+    height:2.5em;
+    width:7em;
+    border-radius: 15px;
+    font-size:large;
+    border-style: none;   
+    background-color:   #ffebdd;
+    border: 1px solid black;
+    cursor:pointer;
+  
+}
+
+
+.form-container-side{
+    height: 90vh;
+    width: 40vw;
+    background-color:#ffebdd;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: url('./login-icon-bg.png');
+    background-repeat: no-repeat;
+
+}
+.tagline-register{
+
+    color:rgb(28, 137, 137);
+    font-family:'poppins,sans serif';
+    font-size: xx-large;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 4em;
+}
+.register-title p{
+    color: black;
+}
+.Sign-in-btn-register{
+    height:2.5em;
+    width:7em;
+    border-radius: 15px;
+    font-size:large;
+    border-style: none;   
+    background-color:  #1c8989;
+    color:white;
+    border: 1px solid black;
+    cursor:pointer;
+    margin-top: 4em;
+
+}
+.Sign-in-btn-register:hover{
+    background-color:#135353;
+}
+.sign-up-btn-register:hover{
+    background-color: rgba(255, 235, 205, 0.778);
+}

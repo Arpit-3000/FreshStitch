@@ -1,0 +1,22 @@
+/* Services.css */
+.services-page {
+    background-color: #f9f9f9;
+  }
+  
+  .service-card {
+    transition: transform 0.3s ease-in-out;
+    height:3em;
+  }
+  
+  .service-card:hover {
+    transform: scale(1.05);
+  }
+  
+  .service-card img {
+    border-radius: 0.375rem;
+  }
+  
+  .service-card button {
+    transition: background-color 0.3s ease-in-out;
+  }
+  

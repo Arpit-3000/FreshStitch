@@ -1,0 +1,12 @@
+.carousel-container {
+  margin: 20px auto;
+  max-width: 800px;
+}
+
+footer a {
+  transition: color 0.3s ease;
+}
+
+button {
+  cursor: pointer;
+}
