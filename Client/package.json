@@ -11,6 +11,9 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^5.7.5",
+    "@fortawesome/fontawesome-svg-core": "^6.7.2",
+    "@fortawesome/free-solid-svg-icons": "^6.7.2",
+    "@fortawesome/react-fontawesome": "^0.2.2",
     "@mediapipe/face_detection": "^0.4.1646425229",
     "@tensorflow-models/face-detection": "^1.0.3",
     "@tensorflow/tfjs": "^4.22.0",
@@ -28,12 +31,13 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-draggable": "^4.4.6",
-    "react-icons": "^5.3.0",
+    "react-icons": "^5.5.0",
     "react-responsive-carousel": "^3.2.23",
-    "react-router-dom": "^6.28.0",
+    "react-router-dom": "^6.30.0",
     "react-scroll": "^1.9.0",
     "react-toastify": "^10.0.6",
     "react-webcam": "^7.2.0",
+    "recharts": "^2.15.1",
     "three": "^0.173.0"
   },
   "devDependencies": {

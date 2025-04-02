@@ -25,7 +25,12 @@ import Lehenga from './Components/Services/Lehenga.jsx';
 import Stitching from './Components/Services/Stitching.jsx';
 import Jumpsuit from './Components/Services/Jumpsuit.jsx';
 import SalwarSuit from './Components/Services/SalwarSuit.jsx';
-
+import Profile from './Components/Profile.jsx';
+import AdminLogin from './Components/Admin/AdminLogin.jsx';
+import AdminDashboard from './Components/Admin/AdminDashboard.jsx';
+import Products from './Components/Admin/Products.jsx';
+import AdminOrders from './Components/Admin/AdminOrders.jsx';
+import AdminCustomers from './Components/Admin/AdminCustomers.jsx';
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -36,6 +41,7 @@ const AnimatedRoutes = () => {
       <ToastContainer />
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<Home />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/cart" element={<BagSection />} />
@@ -53,6 +59,11 @@ const AnimatedRoutes = () => {
         <Route path="/Salwarsuit" element={<SalwarSuit/>}/>
         <Route path="/RegisterPage" element={<AnimatedRoute><RegisterForm /></AnimatedRoute>} />
         <Route path="/LoginPage" element={<AnimatedRoute2><LoginForm /></AnimatedRoute2>} />
+        <Route path="/admin-login" element={<AdminLogin />} />
+        <Route path="/admin-dashboard" element={<AdminDashboard />} />
+        <Route path="/admin-products" element={<Products/>}/>
+        <Route path="/admin-orders" element={<AdminOrders/>}/>
+        <Route path="/admin-customers" element={<AdminCustomers/>}/>
       </Routes>
 
     </AnimatePresence>
@@ -72,3 +83,5 @@ const App = () => {
 };
 
 export default App;
+
+

@@ -7,6 +7,8 @@ module.exports = {
         cadetdark: '#135353',
         cream: '#ffebdd',
         creamLight:'#faf6f2',
+        creamDark:'#e6ccba',
+        cream1:'#edcaad',
       },
     },
   },

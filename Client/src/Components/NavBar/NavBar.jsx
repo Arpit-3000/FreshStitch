@@ -1,12 +1,16 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
+import { deleteUser } from "firebase/auth";
 import './NavBar.css';
 import account from './account-png.png';
 import logo from './Logo.png';
 import { toast, ToastContainer } from 'react-toastify'; // Import react-toastify
 import 'react-toastify/dist/ReactToastify.css';
+import { auth} from "../../../firebase";
+import { signOut, setPersistence, browserSessionPersistence } from "firebase/auth";
 
 const Navbar = () => {
+  const [user, setUser] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login state
   const [showDropdown, setShowDropdown] = useState(false); // Account dropdown visibility
@@ -26,24 +30,46 @@ const Navbar = () => {
     setShowServicesDropdown((prevState) => !prevState); // Toggle services dropdown visibility
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.clear();
- 
-      // localStorage.clear();
-      // window.location.reload();// Remove the token on logout
-    setIsLoggedIn(false); // Update login state
-    setShowDropdown(false); // Close account dropdown
-    setShowServicesDropdown(false);
 
-    navigate('/');
-    toast.error('You are logged out!', {
-      position: 'bottom-center',
-      autoClose: 2000,
-      hideProgressBar: true,
-    }); // Close services dropdown // Redirect to login page
+  const handleLogout = async () => {
+      try {
+          // Firebase logout
+          await signOut(auth);
+  
+          // Ensure no auto-login on next visit
+          await setPersistence(auth, browserSessionPersistence);  // Session will not persist
+  
+          // Clear local/session storage
+          localStorage.removeItem("token");
+          sessionStorage.clear();
+  
+          // Reset user state
+          setUser(null);
+          setIsLoggedIn(false);
+  
+          toast.success("Logged out successfully!", {
+              position: "bottom-center",
+              autoClose: 2000,
+              hideProgressBar: true,
+          });
+          
+          setTimeout(() => {
+            navigate('/');
+            window.location.reload();
+            window.location.href = "/";
+              }, 2000);
+  
+      } catch (error) {
+          console.error("Logout error:", error);
+          toast.error("Logout failed, please try again.", {
+              position: "bottom-center",
+              autoClose: 2000,
+              hideProgressBar: true,
+          });
+      }
   };
-
+  
+  
   const checkLoginStatus = () => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -80,6 +106,7 @@ const Navbar = () => {
   useEffect(() => {
     checkLoginStatus();
   }, []);
+
 
   return (
     <nav className="navbar">

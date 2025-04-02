@@ -1,6 +1,6 @@
 import React from "react";
 import { Carousel } from "react-responsive-carousel";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import file2 from './file2.jpg';
@@ -24,14 +24,16 @@ const Home = () => {
   const scrollToSection = (id) => {
     document.getElementById(id).scrollIntoView({ behavior: "smooth" });
   };
-   useEffect(() => {
-          window.scrollTo(0, 0); // Scroll to top when this page loads
-        }, []);
+  useEffect(() => {
+    window.scrollTo(0, 0); // Scroll to top when this page loads
+  }, []);
+
+  const navigate = useNavigate(); 
 
 
   return (
     <div className="home">
-     
+
       <nav className="sticky top-0 z-50 bg-cadetblue p-4 shadow-lg">
         <ul className="flex space-x-4 overflow-x-auto whitespace-nowrap text-white">
           <li>
@@ -53,50 +55,50 @@ const Home = () => {
       </nav>
 
       {/* Carousel */}
-<div className="carousel-container mt-1">
-  <Carousel showThumbs={false} autoPlay infiniteLoop>
-    <div>
-      <img
-        src={file3}
-        className="carousel"
-        alt="Laundry Service"
-        style={{ width: '100%', height: 'auto', maxHeight: '700px' }}
-      />
-      <div className="absolute flex-col space-y-5 left-5 top-20 md:left-20 lg:left-40 md:top-32 lg:top-40 h-auto w-11/12 md:w-3/4 lg:w-96">
-        <div className="text-black font-medium text-3xl md:text-5xl lg:text-6xl pb-2 md:pb-4 font-serif">
-          Welcome to
-        </div>
-        <div className="text-black text-xl md:text-2xl lg:text-3xl font-serif pb-2 md:pb-4">
-          Fresh Stitch - Perfect place for Dhulai
-        </div>
-        <button className="border-black hover:bg-sky-950 font-sans rounded-sm h-10 w-24 md:h-10 md:w-28 text-white font-semibold bg-sky-800">
-          <a href="/about">View More</a>
-        </button>
+      <div className="carousel-container mt-1">
+        <Carousel showThumbs={false} autoPlay infiniteLoop>
+          <div>
+            <img
+              src={file3}
+              className="carousel"
+              alt="Laundry Service"
+              style={{ width: '100%', height: 'auto', maxHeight: '700px' }}
+            />
+            <div className="absolute flex-col space-y-5 left-5 top-20 md:left-20 lg:left-40 md:top-32 lg:top-40 h-auto w-11/12 md:w-3/4 lg:w-96">
+              <div className="text-black font-medium text-3xl md:text-5xl lg:text-6xl pb-2 md:pb-4 font-serif">
+                Welcome to
+              </div>
+              <div className="text-black text-xl md:text-2xl lg:text-3xl font-serif pb-2 md:pb-4">
+                Fresh Stitch - Perfect place for Dhulai
+              </div>
+              <button className="border-black hover:bg-sky-950 font-sans rounded-sm h-10 w-24 md:h-10 md:w-28 text-white font-semibold bg-sky-800">
+                <a href="/about">View More</a>
+              </button>
+            </div>
+            <p className="legend">Fresh Stitch</p>
+          </div>
+
+          <div>
+            <img
+              src={file2}
+              alt="Tailoring Service"
+              style={{ width: '100%', height: 'auto', maxHeight: '700px' }}
+            />
+            <div className="absolute flex-col space-y-5 right-5 top-20 md:right-20 lg:right-40 md:top-32 lg:top-40 h-auto w-11/12 md:w-3/4 lg:w-96">
+              <div className="text-black font-medium text-3xl md:text-5xl lg:text-6xl pb-2 md:pb-4 font-serif">
+                Welcome to
+              </div>
+              <div className="text-black text-xl md:text-2xl lg:text-3xl font-serif pb-2 md:pb-4">
+                Fresh Sticth - Perfect place for Silai
+              </div>
+              <button className="border-black hover:bg-sky-950 font-sans rounded-sm h-10 w-24 md:h-10 md:w-28 text-white font-semibold bg-sky-800">
+                <a href="/about">View More</a>
+              </button>
+            </div>
+            <p className="legend">Fresh Stitch</p>
+          </div>
+        </Carousel>
       </div>
-      <p className="legend">Fresh Stitch</p>
-    </div>
-    
-    <div>
-      <img
-        src={file2}
-        alt="Tailoring Service"
-        style={{ width: '100%', height: 'auto', maxHeight: '700px' }}
-      />
-      <div className="absolute flex-col space-y-5 right-5 top-20 md:right-20 lg:right-40 md:top-32 lg:top-40 h-auto w-11/12 md:w-3/4 lg:w-96">
-        <div className="text-black font-medium text-3xl md:text-5xl lg:text-6xl pb-2 md:pb-4 font-serif">
-          Welcome to
-        </div>
-        <div className="text-black text-xl md:text-2xl lg:text-3xl font-serif pb-2 md:pb-4">
-          Fresh Sticth - Perfect place for Silai
-        </div>
-        <button className="border-black hover:bg-sky-950 font-sans rounded-sm h-10 w-24 md:h-10 md:w-28 text-white font-semibold bg-sky-800">
-          <a href="/about">View More</a>
-        </button>
-      </div>
-      <p className="legend">Fresh Stitch</p>
-    </div>
-  </Carousel>
-</div>
 
 
       {/* About Section */}
@@ -189,26 +191,26 @@ const Home = () => {
         </div>
       </section>
 
-     {/*How it works Section*/}
+      {/*How it works Section*/}
       <div className="mt-16">
         <h2 className="text-3xl font-semibold text-center mb-8">How It Works?</h2>
         <div className="flex justify-center">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <FlowChartStep 
-            step="1" 
-            title="Place Order" 
-            description="Select services like washing, dry cleaning, ironing, or tailoring and book online." 
-            imgSrc={placeorder} />
-            <FlowChartStep 
-            step="2" 
-            title="Pick Up" 
-            description="Our team collects your clothes from your doorstep at your convenience." 
-            imgSrc={pickup}/>
-            <FlowChartStep 
-            step="3" 
-            title="Clean & Deliver" 
-            description="We clean, press, and deliver your clothes back, making them look fresh and new."
-            imgSrc={deliver} />
+            <FlowChartStep
+              step="1"
+              title="Place Order"
+              description="Select services like washing, dry cleaning, ironing, or tailoring and book online."
+              imgSrc={placeorder} />
+            <FlowChartStep
+              step="2"
+              title="Pick Up"
+              description="Our team collects your clothes from your doorstep at your convenience."
+              imgSrc={pickup} />
+            <FlowChartStep
+              step="3"
+              title="Clean & Deliver"
+              description="We clean, press, and deliver your clothes back, making them look fresh and new."
+              imgSrc={deliver} />
           </div>
         </div>
       </div>
@@ -218,16 +220,16 @@ const Home = () => {
         <h2 className="text-3xl font-semibold text-center mb-8">Why Choose Us?</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 ml-10">
           <WhyChooseUsCard title="Affordable Pricing"
-           description="We offer competitive prices without compromising on quality." 
-           imgSrc={affordprice} />
-          <WhyChooseUsCard 
-          title="High-Quality Care" 
-          description="Our team ensures that every garment receives premium care." 
-          imgSrc={qualitycare} />
-          <WhyChooseUsCard 
-          title="Fast Turnaround" 
-          description="Get your clothes cleaned and delivered quickly without hassle."
-          imgSrc={fastdelivery} />
+            description="We offer competitive prices without compromising on quality."
+            imgSrc={affordprice} />
+          <WhyChooseUsCard
+            title="High-Quality Care"
+            description="Our team ensures that every garment receives premium care."
+            imgSrc={qualitycare} />
+          <WhyChooseUsCard
+            title="Fast Turnaround"
+            description="Get your clothes cleaned and delivered quickly without hassle."
+            imgSrc={fastdelivery} />
         </div>
       </div>
 
@@ -241,6 +243,9 @@ const Home = () => {
             <p>Phone: +91 790-5739-950</p>
           </div>
           <div>
+            <h4 onClick={() => navigate("/admin-login")} className="font-bold text-lg text-black cursor-pointer underline">
+              Admin Panel
+            </h4>
             <h3 className="font-bold text-lg text-black">Follow Us</h3>
             <div className="flex space-x-4">
               <a href="https://www.facebook.com/" target="blank" className="hover:text-yellow-400">Facebook</a>
@@ -273,7 +278,7 @@ const ServiceCard = ({ title, description, imgSrc, link }) => {
 
   return (
     <div className="max-w-sm bg-cream border border-gray-200 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 p-4">
-      <img src={imgSrc} alt={title} className="w-full h-80 object-cover" /> 
+      <img src={imgSrc} alt={title} className="w-full h-80 object-cover" />
       <h3 className="text-xl font-bold mb-2">{title}</h3>
       <p>{description}</p>
       <button
@@ -286,7 +291,7 @@ const ServiceCard = ({ title, description, imgSrc, link }) => {
   );
 };
 
-const FlowChartStep = ({ step, title, description,imgSrc }) => {
+const FlowChartStep = ({ step, title, description, imgSrc }) => {
   return (
     <div className="text-center bg-white border border-gray-200 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 p-2 mr-4 ml-4">
       <h3 className="text-2xl font-bold mb-2">Step {step}: {title}</h3>
@@ -296,12 +301,12 @@ const FlowChartStep = ({ step, title, description,imgSrc }) => {
   );
 };
 
-const WhyChooseUsCard = ({ title, description,imgSrc }) => {
+const WhyChooseUsCard = ({ title, description, imgSrc }) => {
   return (
     <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 p-4">
       <h3 className="text-xl font-bold mb-2 text-center" >{title}</h3>
       <p className="text-center">{description}</p>
-      <img src={imgSrc} alt={title} className="w-50 h-20 p-4 ml-36 mt-5 object-cover"/>
+      <img src={imgSrc} alt={title} className="w-50 h-20 p-4 ml-36 mt-5 object-cover" />
     </div>
   );
 };
