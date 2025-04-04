@@ -3,6 +3,7 @@ import EmptyBag from "./EmptyBag.png";
 import { toast } from 'react-toastify';
 import { Link, useNavigate } from "react-router-dom";
 import 'react-toastify/dist/ReactToastify.css';
+import Loader from "../Loader/Loader";
 
 const Stitching = () => {
     const [bag, setBag] = useState({
@@ -14,6 +15,7 @@ const Stitching = () => {
 
     const [selectedService, setSelectedService] = useState("Stitching");
     const [categories, setCategories] = useState([]);
+    const [loading,setLoading]=useState(true)
     const navigate = useNavigate();
 
 
@@ -48,8 +50,10 @@ const Stitching = () => {
                 const response = await fetch("http://localhost:4000/api/tailoringcategories");
                 const data = await response.json();
                 setCategories(data);
+                setLoading(false);
             } catch (error) {
                 console.error("Error fetching categories:", error);
+                setLoading(false);
             }
         };
     
@@ -136,6 +140,11 @@ const Stitching = () => {
                     )}
                 </div>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                 {loading ? (
+                        <Loader/>
+                        ) : categories.length === 0 ? (
+                          <p className="text-center text-lg text-gray-500">No Categories Found</p>
+                        ) : (
                     <div>
                         {categories.map((category, index) => (
                             <details
@@ -168,6 +177,7 @@ const Stitching = () => {
                             </details>
                         ))}
                     </div>
+                        )}
                     <div className="bg-white shadow rounded-lg p-4">
                         <h2 className="text-xl font-bold text-cadetdark">Your Bag</h2>
                         {bag.items.length > 0 ? (

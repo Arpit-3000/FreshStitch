@@ -1,5 +1,7 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { toast} from 'react-toastify'; // Import react-toastify
+import 'react-toastify/dist/ReactToastify.css';
 
 const OrderHistory = () => {
   const location = useLocation();
@@ -20,43 +22,54 @@ const OrderHistory = () => {
     currentDate,
     bag = [], 
     subtotal = 0, 
-    DeliveryCharge = 5, 
+    DeliveryCharge = 5,
   } = state || {};
 
-  const grandTotal = subtotal + DeliveryCharge;
+  const grandtotal = subtotal + DeliveryCharge;
 
  
+  const tokenEmail = localStorage.getItem('token'); // email used as token
   const handlePlaceOrder = async () => {
     try {
-      const orderDetails = {
-        pickupDate,
-        pickupTime,
-        contactName,
-        email,
-        mobileNumber,
-        address,
-        paymentMethod,
-        currentDate,
-        bag,
-        subtotal,
-        DeliveryCharge,
-        grandTotal,
-      };
+      if (!tokenEmail) {
+        alert("You must be logged in to place an order.");
+        return;
+      }
 
-      
+      if (email !== tokenEmail) {
+        alert(`Email mismatch! Logged-in as: ${tokenEmail}, but form shows: ${email}`);
+        return;
+      }
+
+      const orderDetails = {
+        pickupDate: pickupDate || '',
+        pickupTime: pickupTime || '',
+        contactName: contactName || '',
+        email: email?.toLowerCase() || '',
+        mobileNumber: mobileNumber || '',
+        address: address || '',
+        paymentMethod: paymentMethod || '',
+        currentDate: currentDate || '',
+        bag: Array.isArray(bag) ? bag : [],
+        subtotal: Number(subtotal) || 0,
+        DeliveryCharge: Number(DeliveryCharge) || 0,
+        grandtotal: Number(grandtotal) || 0,
+      };
       const response = await fetch('http://localhost:3000/place-order', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': tokenEmail  // ✅ Send email as token
         },
         body: JSON.stringify(orderDetails),
       });
+      
 
       const data = await response.json();
 
       if (response.ok) {
-        alert('Order Placed Successfully!');
-        navigate('/order-confirmation');
+        toast.success("Order Placed");
+        navigate('/my-orders');
       } else {
         alert(data.message || 'Error placing the order');
       }
@@ -66,9 +79,8 @@ const OrderHistory = () => {
     }
   };
 
- 
   const handleEditDetails = () => {
-    navigate('/cart', { state }); 
+    navigate('/cart', { state });
   };
 
   return (
@@ -144,7 +156,7 @@ const OrderHistory = () => {
                 {bag.map((item, index) => (
                   <li key={index} className="flex justify-between py-2 border-b-2   ">
                     <span>{item.name} (x{item.quantity})</span>
-                    <span>{item.price * item.quantity}/-</span>
+                    <span>₹{item.price * item.quantity}</span>
                   </li>
                 ))}
               </ul>
@@ -160,7 +172,7 @@ const OrderHistory = () => {
                 <hr className="my-4" />
                 <p className="flex justify-between font-bold ">
                   <span>Grand Total</span>
-                  <span>{grandTotal}/-</span>
+                  <span>{grandtotal}/-</span>
                 </p>
               </div>
             </>

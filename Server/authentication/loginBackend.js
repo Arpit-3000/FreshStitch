@@ -27,27 +27,44 @@ app.post("/auth/google", async (req, res) => {
 
     try {
         let user = await userDetails.findOne({ email });
-
+    
         if (!user) {
-            // ✅ If new user, create entry
-            user = new userDetails({ userId, username, email, password: "" });
-            await user.save();
+            user = new userDetails({
+                userId,
+                email,
+                username,
+                isLoggedIn: true
+            });
+    
+            await user.save()
+                .then(savedUser => console.log("✅ New user saved:", savedUser))
+                .catch(err => console.error("❌ Save error:", err)); // <== log here!
         } else {
-            // ✅ Update existing user info (if changed)
-            user.username = username;
             user.userId = userId;
+            user.username = username;
+            user.isLoggedIn = true;
             await user.save();
+            console.log("🔁 Existing user updated:", user);
         }
-
-        // ✅ Generate JWT token
-        const token = jwt.sign({ userId: user.userId, username: user.username }, JWT_SECRET, { expiresIn: "7d" });
-
-        res.status(200).json({ token, message: "Google Login Successful" });
+    
+        const token = email;
+    
+        res.status(200).json({
+            token,
+            message: "Google Login Successful",
+            user: {
+                id: user.userId,
+                name: user.username,
+                email: user.email
+            }
+        });
     } catch (error) {
-        console.error("Google Auth Error:", error);
+        console.error("❌ Google Auth Error:", error);
         res.status(500).json({ message: "Authentication Failed" });
     }
+    
 });
+
 // ✅ Login Route
 app.post("/login", async (req, res) => {
     try {
@@ -66,116 +83,160 @@ app.post("/login", async (req, res) => {
     }
 });
 
-//Orders
+// ✅ Place Order Route
+app.post("/place-order", async (req, res) => {
+    const {
+        pickupDate,
+        pickupTime,
+        contactName,
+        email,
+        mobileNumber,
+        address,
+        paymentMethod,
+        currentDate,
+        bag,
+        subtotal,
+        DeliveryCharge
+    } = req.body;
 
-app.post('/place-order', async (req, res) => {
-  const {
-    pickupDate,
-    pickupTime,
-    contactName,
-    email,
-    mobileNumber,
-    address,
-    paymentMethod,
-    currentDate,
-    bag,
-    subtotal,
-    DeliveryCharge,
-    grandTotal,
-  } = req.body;
+    const tokenEmail = req.headers.authorization;
 
-  // Check if the email and bag are provided
-  if (!req.body.email || !bag || bag.length === 0) {
-    return res.status(400).json({ message: "Email and bag items are required to place an order." });
-  }
-
-  try {
-    // Check if the email exists in the database
-    const user = await userDetails.findOne({ email: email });
-
-    if (!user) {
-      return res.status(400).json({ message: "Email should be the same as during registration" });
+    // Email and bag must be present
+    if (!email || !bag || bag.length === 0) {
+        return res.status(400).json({ message: "Email and bag items are required to place an order." });
     }
 
-    // Create the new order with the order status set to "Order Placed"
-    const newOrder = {
-      pickupDate,
-      pickupTime,
-      contactName,
-      email,
-      mobileNumber,
-      address,
-      paymentMethod,
-      currentDate,
-      subtotal,
-      DeliveryCharge,
-      grandTotal,
-      items: bag, // Store the bag items in the database
-      status: "Order Placed", // Set default status to "Order Placed"
-    };
+    // ✅ Only check if tokenEmail matches the entered email
+    if (!tokenEmail || tokenEmail.toLowerCase() !== email.toLowerCase()) {
+        return res.status(403).json({ message: "Email mismatch. You are not authorized to place this order." });
+    }
 
-    // Save the order in the database
-    const savedOrder = await Order.create(newOrder);
+    try {
+        const grandTotal = Number(subtotal) + Number(DeliveryCharge);
 
-    // Send success response
-    res.status(200).json({ message: "Order placed successfully", Order: savedOrder });
-  } catch (error) {
-    console.error("Error placing order:", error);
-    res.status(500).json({ message: "Error placing order" });
-  }
+        const newOrder = new Order({
+            pickupDate,
+            pickupTime,
+            contactName,
+            email,
+            mobileNumber,
+            address,
+            paymentMethod,
+            orderDate: new Date(),
+            subtotal,
+            DeliveryCharge,
+            grandtotal: grandTotal,
+            items: bag,
+            orderStatus: "Order Placed"
+        });
+
+        const savedOrder = await newOrder.save();
+
+        res.status(200).json({ message: "Order placed successfully", Order: savedOrder });
+    } catch (error) {
+        console.error("Error placing order:", error);
+        res.status(500).json({ message: "Error placing order" });
+    }
 });
 
-app.get("/place-order", (req, res) => {
-  Order.find()
-    .then(orders => {
-      const formattedOrders = orders.map(order => ({
-        ...order._doc,
-        totalItems: Array.isArray(order.items) ? order.items.length : 0,
-        status: order.orderStatus || "Order Placed"  // Ensure the status is set to "Order Placed" if not present
-      }));
-      res.json(formattedOrders);
-    })
-    .catch((err) => res.status(500).send("Error fetching orders"));
+
+// ✅ Fetch All Orders
+app.get("/place-order", async (req, res) => {
+    try {
+        const orders = await Order.find().lean(); // Lean for performance optimization
+
+        if (!orders.length) {
+            return res.status(404).json({ message: "No orders found" });
+        }
+
+        const formattedOrders = orders.map(order => ({
+            ...order,
+            totalItems: Array.isArray(order.items) ? order.items.length : 0,
+            status: order.orderStatus || "Order Placed",
+            email: order.email || ""
+        }));
+
+        res.json(formattedOrders);
+    } catch (error) {
+        console.error("Error fetching orders:", error);
+        res.status(500).json({ error: "Error fetching orders" });
+    }
 });
 
-// Update the status
+// ✅ Update Order Status
 app.put("/place-order/:id", async (req, res) => {
-  const { id } = req.params;
-  const { status } = req.body;  // status here is coming from the frontend
-  try {
-    console.log("Received status update:", status);
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
 
-    // Update the order status in the database, make sure you're updating `orderStatus`
-    const updatedOrder = await Order.findByIdAndUpdate(id, { orderStatus: status }, { new: true });
+        console.log("Received status update:", status);
 
-    if (!updatedOrder) {
-      return res.status(404).json({ error: "Order not found" });
+        const updatedOrder = await Order.findByIdAndUpdate(id, { orderStatus: status }, { new: true });
+
+        if (!updatedOrder) {
+            return res.status(404).json({ error: "Order not found" });
+        }
+
+        console.log("Updated order:", updatedOrder);
+
+        res.json(updatedOrder);
+    } catch (error) {
+        console.error("Error updating order status:", error);
+        res.status(500).json({ error: "Failed to update order status" });
     }
-
-    console.log("Updated order:", updatedOrder);
-
-    // Send the updated order back to the frontend
-    res.json(updatedOrder);
-  } catch (error) {
-    console.error("Error updating order status:", error);
-    res.status(500).json({ error: "Failed to update order status" });
-  }
 });
 
+// ✅ Order Statistics (Dashboard)
+app.get("/order-stats", async (req, res) => {
+    try {
+        const totalOrders = await Order.countDocuments();
+        const pendingOrders = await Order.countDocuments({
+            orderStatus: { $in: ["Order Placed", "Order Delivered", "Order Processing", "Order Picked"] }
+        });
+        const completedOrders = await Order.countDocuments({ orderStatus: "Order Completed" });
 
-//CUSTOMERS DETAILS
+        const totalEarnings = await Order.aggregate([
+            { $group: { _id: null, total: { $sum: "$grandtotal" } } }
+        ]);
 
-app.get("/place-order", (req, res) => {
-  Order.find()
-    .then(orders => {
-      const formattedOrders = orders.map(order => ({
-        ...order._doc,
-        totalItems: Array.isArray(order.items) ? order.items.length : 0,
-        status: order.orderStatus || "Order Placed"  // Ensure the status is set to "Order Placed" if not present
-      }));
-      res.json(formattedOrders);
-    })
-    .catch((err) => res.status(500).send("Error fetching orders"));
+        res.json({
+            totalOrders,
+            pendingOrders,
+            completedOrders,
+            totalEarnings: totalEarnings.length > 0 ? totalEarnings[0].total : 0
+        });
+    } catch (error) {
+        console.error("Error fetching order stats:", error);
+        res.status(500).json({ message: "Failed to fetch order statistics" });
+    }
+});
+
+// ✅ Weekly Orders Graph Data
+app.get("/weekly-orders", async (req, res) => {
+    try {
+        const weeklyOrders = await Order.aggregate([
+            {
+                $group: {
+                    _id: { $dayOfWeek: "$orderDate" },
+                    Order_Placed: { $sum: 1 },
+                    Order_Completed: { $sum: { $cond: [{ $eq: ["$orderStatus", "Order Completed"] }, 1, 0] } }
+                }
+            },
+            { $sort: { "_id": 1 } }
+        ]);
+
+        const dayMapping = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        const formattedData = weeklyOrders.map(entry => ({
+            day: dayMapping[entry._id - 1],
+            Order_Placed: entry.Order_Placed,
+            Order_Completed: entry.Order_Completed
+        }));
+
+        res.json(formattedData);
+    } catch (error) {
+        console.error("Error fetching weekly orders:", error);
+        res.status(500).json({ message: "Failed to fetch weekly orders" });
+    }
 });
 
 // ✅ Start Server

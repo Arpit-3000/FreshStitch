@@ -4,10 +4,11 @@ import { deleteUser } from "firebase/auth";
 import './NavBar.css';
 import account from './account-png.png';
 import logo from './Logo.png';
-import { toast, ToastContainer } from 'react-toastify'; // Import react-toastify
+import { toast} from 'react-toastify'; // Import react-toastify
 import 'react-toastify/dist/ReactToastify.css';
-import { auth} from "../../../firebase";
+import { auth } from "../../../firebase";
 import { signOut, setPersistence, browserSessionPersistence } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
 
 const Navbar = () => {
   const [user, setUser] = useState(null);
@@ -29,63 +30,45 @@ const Navbar = () => {
   const handleServicesDropdownToggle = () => {
     setShowServicesDropdown((prevState) => !prevState); // Toggle services dropdown visibility
   };
-
-
-  const handleLogout = async () => {
-      try {
-          // Firebase logout
-          await signOut(auth);
-  
-          // Ensure no auto-login on next visit
-          await setPersistence(auth, browserSessionPersistence);  // Session will not persist
-  
-          // Clear local/session storage
-          localStorage.removeItem("token");
-          sessionStorage.clear();
-  
-          // Reset user state
-          setUser(null);
-          setIsLoggedIn(false);
-  
-          toast.success("Logged out successfully!", {
-              position: "bottom-center",
-              autoClose: 2000,
-              hideProgressBar: true,
-          });
-          
-          setTimeout(() => {
-            navigate('/');
-            window.location.reload();
-            window.location.href = "/";
-              }, 2000);
-  
-      } catch (error) {
-          console.error("Logout error:", error);
-          toast.error("Logout failed, please try again.", {
-              position: "bottom-center",
-              autoClose: 2000,
-              hideProgressBar: true,
-          });
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setIsLoggedIn(!!currentUser); // true if user exists
+      if (!currentUser) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
       }
-  };
+    });
   
+    return () => unsubscribe(); // Clean up
+  }, []);
   
-  const checkLoginStatus = () => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      // localStorage.setItem("isLoggedIn", "true");
-      // window.location.reload();
-      setIsLoggedIn(true);
-      toast.success('You are logged in successfully!', {
-        position: 'bottom-center',
-        autoClose: 2000,
-        hideProgressBar: true,
-      });
+  const handleLogout = async () => {
+    if (!isLoggedIn || !user) {
+      toast.info("You're not logged in!");
+      return;
     }
+  
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    console.log("User from localStorage:", storedUser);
+  
+    // Delay toast slightly to ensure ToastContainer is still mounted
+    setTimeout(() => {
+      toast.success(`Goodbye ${storedUser?.name || "User"}`);
+    }, 100);
+  
+    // Delay signOut to let toast show
+    setTimeout(async () => {
+      await signOut(auth);
+      setIsLoggedIn(false);
+      setUser(null);
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+  
+      navigate('/');
+    }, 2500); // Delay must match Toast autoClose
   };
- 
- 
-
+  
   // Scroll to section when hash changes
   useEffect(() => {
     if (location.hash) {
@@ -94,7 +77,7 @@ const Navbar = () => {
         const navbarHeight = document.querySelector('.navbar').offsetHeight; // Get the Navbar height
         const elementPosition = element.offsetTop; // Get the element's position from the top
         const offsetPosition = elementPosition - navbarHeight; // Adjust for Navbar height
-  
+
         // Scroll with a smooth animation
         window.scrollTo({
           top: offsetPosition,
@@ -103,42 +86,43 @@ const Navbar = () => {
       }
     }
   }, [location]);
-  useEffect(() => {
-    checkLoginStatus();
-  }, []);
 
+  
+  
 
   return (
+  <>
     <nav className="navbar">
       <div className="navbar-logo flex">
         <Link to="/">
           <img src={logo} alt="Logo" style={{ display: 'block' }} />
         </Link>
-        <Link to="/">Fresh Stitch</Link>
+        <Link to="/" className=' font-serif'>Fresh Stitch</Link>
       </div>
 
-      <div className={`navbar-links ${isOpen ? 'open' : ''}`}>
-        <Link to="/">Home</Link>
+      <div className={`navbar-links ${isOpen ? 'open' : ''}`} >
+        <Link to="/" className=' font-serif'>Home</Link>
+
         {/* Services Dropdown Button */}
         <div className="services-section">
           <button
-            className="services-button"
+            className="services-button font-serif"
             onClick={handleServicesDropdownToggle} // Toggle dropdown on click
           >
             Services
           </button>
           {showServicesDropdown && (
-            <div className="services-dropdown-menu">
+            <div className="services-dropdown-menu rounded-xl">
               <Link
                 to="/services#laundry-services"
-                className="dropdown-item"
+                className="dropdown-item font-serif font-light"
                 onClick={() => setShowServicesDropdown(false)} // Close dropdown on click
               >
                 Laundry Services
               </Link>
               <Link
                 to="/services#tailoring-services"
-                className="dropdown-item"
+                className="dropdown-item font-serif font-light"
                 onClick={() => setShowServicesDropdown(false)} // Close dropdown on click
               >
                 Tailoring Services
@@ -146,10 +130,8 @@ const Navbar = () => {
             </div>
           )}
         </div>
-        <Link to="/about">About</Link>
-        <Link to="/contact">Contact</Link>
-        <Link to="#">Dashboard</Link>
-        <Link to="/cart">Bag</Link>
+        <Link to="/about" className=' font-serif'>About</Link>
+        <Link to="/contact" className=' font-serif'>Contact</Link>
 
         <div className="account-section">
           <img
@@ -159,39 +141,17 @@ const Navbar = () => {
             onClick={handleAccountDropdownToggle} // Toggle account dropdown on click
           />
           {showDropdown && (
-            <div className="dropdown-menu">
+            <div className="dropdown-menu rounded-xl">
               {isLoggedIn ? (
                 <>
-                  <Link
-                    to="/profile"
-                    className="dropdown-item"
-                    onClick={() => setShowDropdown(false)}
-                  >
-                    My Profile
-                  </Link>
-                  <button
-                    className="logout-btn dropdown-item"
-                    onClick={handleLogout}
-                  >
-                    Logout
-                  </button>
+                  <Link to="/profile" className="dropdown-item font-serif " onClick={()=>{setShowDropdown(false)}} >My Profile</Link>
+                  <Link to="/my-orders" className='dropdown-item font-serif' onClick={()=>{setShowDropdown(false)}}>Track Orders</Link>
+                  <button className="logout-btn dropdown-item font-serif"  onClick={handleLogout}>Logout</button>
                 </>
               ) : (
                 <>
-                  <Link
-                    to="/LoginPage"
-                    className="dropdown-item"
-                    onClick={() => setShowDropdown(false)}
-                  >
-                    Login
-                  </Link>
-                  <Link
-                    to="/RegisterPage"
-                    className="dropdown-item"
-                    onClick={() => setShowDropdown(false)}
-                  >
-                    Sign Up
-                  </Link>
+                  <Link to="/LoginPage" className="dropdown-item font-serif">Login</Link>
+                  <Link to="/RegisterPage" className="dropdown-item font-serif">Sign Up</Link>
                 </>
               )}
             </div>
@@ -205,6 +165,8 @@ const Navbar = () => {
         <span className="bar"></span>
       </div>
     </nav>
+   
+   </>
   );
 };
 

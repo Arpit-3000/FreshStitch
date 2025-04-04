@@ -4,6 +4,9 @@ import { useEffect } from "react";
 import EmptyBag from "./EmptyBag.png";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Loader from "../Loader/Loader";
+
+
 
 
 const WashAndIronDetails = () => {
@@ -19,6 +22,7 @@ const WashAndIronDetails = () => {
 
   
     const [categories, setCategories] = useState([]);
+    const [loading,setLoading]=useState(true)
     const navigate = useNavigate();
     useEffect(() => {
         window.scrollTo(0, 0); // Scroll to top when this page loads
@@ -31,8 +35,10 @@ const WashAndIronDetails = () => {
                 const response = await fetch("http://localhost:4000/api/laundryCategories");
                 const data = await response.json();
                 setCategories(data);
+                setLoading(false);
             } catch (error) {
                 console.error("Error fetching categories:", error);
+                setLoading(false);
             }
         };
 
@@ -210,6 +216,11 @@ const WashAndIronDetails = () => {
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         {/* Categories */}
+                        {loading ? (
+                        <Loader/>
+                        ) : categories.length === 0 ? (
+                          <p className="text-center text-lg text-gray-500">No Categories Found</p>
+                        ) : (
                         <div>
                             {categories.map((category, index) => (
                                 <details
@@ -242,6 +253,7 @@ const WashAndIronDetails = () => {
                                 </details>
                             ))}
                         </div>
+                        )}
 
                         {/* Bag Section */}
                         <div className="bg-white shadow rounded-lg p-4">
@@ -264,7 +276,7 @@ const WashAndIronDetails = () => {
                                             >
                                                 <span>{bagItem.name}</span>
                                                 <span>
-                                                    {bagItem.quantity} x ৳{bagItem.price} = ৳
+                                                    {bagItem.quantity} x ₹{bagItem.price} = ₹
                                                     {bagItem.quantity * bagItem.price}
                                                 </span>
                                             </li>

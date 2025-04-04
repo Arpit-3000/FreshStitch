@@ -1,160 +1,405 @@
 import React, { useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import EmptyBag from "./EmptyBag.png";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Loader from "../Loader/Loader";
+
+
+
 
 const IronAndFoldDetails = () => {
-    const [bag, setBag] = useState([]);
-    const [subtotal, setSubtotal] = useState(0);
-    const DeliveryCharge = 5;
+    const [bag, setBag] = useState({
+        items: [],
+        selectedService: "Wash-And-Iron",
+        subtotal: 0,
+        deliveryCharge: 10,
+        total: 10
+    });
+    const[selectedService,setselectedService]=useState("Iron & Fold");
 
+
+  
+    const [categories, setCategories] = useState([]);
+    const [loading,setLoading]=useState(true)
     const navigate = useNavigate();
     useEffect(() => {
         window.scrollTo(0, 0); // Scroll to top when this page loads
-      }, []);
+        const savedBag = localStorage.getItem("bag");
+        if (savedBag) {
+            setBag(JSON.parse(savedBag)); // Load the bag data from localStorage
+        }
+        const fetchCategories = async () => {
+            try {
+                const response = await fetch("http://localhost:4000/api/laundryCategories");
+                const data = await response.json();
+                setCategories(data);
+                setLoading(false);
+            } catch (error) {
+                console.error("Error fetching categories:", error);
+                setLoading(false);
+            }
+        };
 
-    // Add item to the bag
+        fetchCategories();
+        return () => {
+            localStorage.removeItem("bag");
+        };
+    }, []);
+    const [isOpen, setIsOpen] = useState(false);
+
+    const toggleDropdown = () => {
+        setIsOpen(!isOpen);
+    };
+
+    useEffect(() => {
+        localStorage.setItem("bag", JSON.stringify(bag));
+        // Save to localStorage whenever bag updates
+    }, [bag]);
+    console.log(bag);
+
+
+    const handleProceedToCheckout = () => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            navigate("/cart", {
+                state: {
+                    bag: bag.items,
+                    selectedService:bag.selectedService,
+                    subtotal: bag.subtotal,
+                    deliveryCharge: bag.deliveryCharge,
+                    total: bag.total,
+                }
+            });
+        } else {
+           toast.error('Please log in to proceed!', {
+                          position: 'bottom-center',
+                          autoClose: 2000,
+                          hideProgressBar: true,
+                      });
+                     
+                      setTimeout(() => {
+                          navigate("/LoginPage");
+                      }, 1000);
+        }
+    };
+
+
+    const faqs = [
+        "What is included in the iron & fold service?",
+        "How much time does it take to deliver?",
+        "Are there any additional charges for bulky items?",
+    ];
+
     const addItem = (item) => {
-        const existingItem = bag.find((bagItem) => bagItem.name === item.name);
+        const existingItem = bag.items.find((bagItem) => bagItem.name === item.name);
 
+        let updatedItems;
         if (existingItem) {
-            const updatedBag = bag.map((bagItem) =>
+            updatedItems = bag.items.map((bagItem) =>
                 bagItem.name === item.name
                     ? { ...bagItem, quantity: bagItem.quantity + 1 }
                     : bagItem
             );
-            setBag(updatedBag);
         } else {
-            setBag([...bag, { ...item, quantity: 1 }]);
+            updatedItems = [...bag.items, { ...item, quantity: 1 }];
         }
-        setSubtotal(subtotal + item.price);
+
+        const updatedSubtotal = bag.subtotal + item.price;
+        const updatedTotal = updatedSubtotal + bag.deliveryCharge;
+
+        setBag({
+            ...bag,
+            items: updatedItems,
+            subtotal: updatedSubtotal,
+            total: updatedTotal,
+        });
     };
 
-    // Remove item from the bag
     const removeItem = (item) => {
-        const existingItem = bag.find((bagItem) => bagItem.name === item.name);
+        const existingItem = bag.items.find((bagItem) => bagItem.name === item.name);
+        if (!existingItem) return;
 
-        if (existingItem && existingItem.quantity > 1) {
-            const updatedBag = bag.map((bagItem) =>
-                bagItem.name === item.name ? { ...bagItem, quantity: bagItem.quantity - 1 } : bagItem
+        let updatedItems;
+        if (existingItem.quantity > 1) {
+            updatedItems = bag.items.map((bagItem) =>
+                bagItem.name === item.name
+                    ? { ...bagItem, quantity: bagItem.quantity - 1 }
+                    : bagItem
             );
-            setBag(updatedBag);
         } else {
-            setBag(bag.filter((bagItem) => bagItem.name !== item.name));
+            updatedItems = bag.items.filter((bagItem) => bagItem.name !== item.name);
         }
-        setSubtotal(subtotal - item.price);
+
+        const updatedSubtotal = bag.subtotal - item.price;
+        const updatedTotal = updatedSubtotal + bag.deliveryCharge;
+
+        setBag((prevBag) => ({
+            ...prevBag,
+            items: updatedItems,
+            subtotal: updatedSubtotal,
+            total: updatedTotal,
+        }));
     };
 
-    const grandTotal = subtotal + DeliveryCharge;
-
-    const mensItems = [
-        { name: "Shawl", price: 10 },
-        { name: "Jubba", price: 20 },
-        { name: "Suit (Blazer + Trouser)", price: 30 },
-    ];
-
-    const womensItems = [
-        { name: "Home Wear", price: 15 },
-        { name: "Jar", price: 25 },
-        { name: "Kameez", price: 20 },
-        { name: "Sarree", price: 40 },
-    ];
 
     const renderAddButton = (item) => {
-        const existingItem = bag.find((bagItem) => bagItem.name === item.name);
+        const existingItem = bag.items.find((bagItem) => bagItem.name === item.name);
 
         if (existingItem) {
             return (
                 <div className="flex items-center">
-                    <button onClick={() => removeItem(item)} className="px-3 py-1 bg-gray-400 text-white rounded-l">-</button>
-                    <span className="px-3 py-1 bg-white text-black border-t border-b">{existingItem.quantity}</span>
-                    <button onClick={() => addItem(item)} className="px-3 py-1 bg-cadetblue text-white rounded-r">+</button>
+                    <button
+                        onClick={() => removeItem(item)}
+                        className="px-3 py-1 bg-gray-400 text-white rounded-l"
+                    >
+                        -
+                    </button>
+                    <span className="px-3 py-1 bg-white text-black border-t border-b">
+                        {existingItem.quantity}
+                    </span>
+                    <button
+                        onClick={() => addItem(item)}
+                        className="px-3 py-1 bg-cadetblue text-white rounded-r"
+                    >
+                        +
+                    </button>
                 </div>
             );
         } else {
             return (
-                <button onClick={() => addItem(item)} className="ml-4 px-4 py-2 bg-cadetblue text-white rounded hover:bg-cadetdark transition-colors">
+                <button
+                    onClick={() => addItem(item)}
+                    className="ml-4 px-4 py-2 bg-cadetblue text-white rounded hover:bg-cadetdark transition-colors"
+                >
                     Add to Bag
                 </button>
             );
         }
     };
-    const handleProceedToCheckout = () => {
-        const token = localStorage.getItem('token'); // Check if the user is logged in (by checking token)
-        if (token) {
-          navigate("/cart"); // Navigate to the checkout (cart) page if logged in
-        } else {
-          navigate("/LoginPage"); // Redirect to the login page if not logged in
-        }
-      };
 
     return (
-        <div className="sewing-details flex flex-col md:flex-row p-8 bg-gray-50">
-            {/* Left Section - Items */}
-            <div className="flex-grow mb-8 md:mb-0 md:mr-8">
-                <h1 className="text-3xl font-bold text-gray-800 mb-6">Iron and Fold Service</h1>
+        <>
+            <div className="bg-creamLight">
+                <div className="container mx-auto p-4">
+                    <div className=" relative flex  w-5/5 ">
+                        <h1 className="text-4xl font-bold font-serif  text-cadetblue mb-10 mt-6 ">
+                            Iron & Fold Service
+                        </h1>
+                        <button className="mt-6  px-4 py-2 absolute  right-0 w-48 h-2/4 bg-red-500 text-white rounded hover:bg-red-800 transition-colors" onClick={toggleDropdown}>
+                            Select Service <span>▼</span>
+                        </button>
+                        {isOpen && (
+                            <div className="absolute right-0 top-20 mt-2 w-48 bg-white shadow-lg rounded-md">
+                                <ul className="py-2">
+                                    {[
+                                        <Link to="/wash-and-fold">Wash & Fold</Link>,
+                                        <Link to="/wash-and-iron">Wash & Iron</Link>,
+                                        <Link to="/dry-cleaning">Dry Cleaning</Link>,
+                                        <Link to="/alteration">Alteration</Link>,
+                                        <Link to="/stitching">Stiching</Link>
+                                    ].map((service, index) => (
+                                        <li
+                                            key={index}
+                                            className="px-4 py-2 text-red-500 hover:bg-gray-100 cursor-pointer"
+                                            onClick={() => setIsOpen(false)}
+                                        >
+                                            {service}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+                    </div>
 
-                <h2 className="text-2xl font-semibold text-gray-700 mb-4">Men's Items</h2>
-                <ul className="mb-8">
-                    {mensItems.map((item, index) => (
-                        <li key={index} className="flex justify-between items-center mb-4 p-4 bg-white shadow rounded-lg">
-                            <span className="font-medium text-gray-700">{item.name} - {item.price}/-</span>
-                            {renderAddButton(item)}
-                        </li>
-                    ))}
-                </ul>
-
-                <h2 className="text-2xl font-semibold text-gray-700 mb-4">Women's Items</h2>
-                <ul className="mb-8">
-                    {womensItems.map((item, index) => (
-                        <li key={index} className="flex justify-between items-center mb-4 p-4 bg-white shadow rounded-lg">
-                            <span className="font-medium text-gray-700">{item.name} - {item.price}/-</span>
-                            {renderAddButton(item)}
-                        </li>
-                    ))}
-                </ul>
-
-                {/* Kids Section */}
-                <h2 className="text-2xl font-semibold text-gray-700 mb-2">Kids' Items</h2>
-                <p className="mb-6 text-gray-500">Coming soon...</p>
-            </div>
-
-            {/* Right Section - Bag Summary */}
-            <div className="your-bag bg-white p-6 rounded-lg shadow-lg w-full md:w-1/3">
-                <h2 className="text-xl font-bold text-gray-800 mb-4">Your Bag</h2>
-                {bag.length > 0 ? (
-                    <>
-                        <ul className="mb-4">
-                            {bag.map((item, index) => (
-                                <li key={index} className="flex justify-between py-2 border-b">
-                                    <span>{item.name}(x{item.quantity})</span>
-                                    <span>{item.price * item.quantity}/-</span>
-                                </li>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        {/* Categories */}
+                        {loading ? (
+                        <Loader/>
+                        ) : categories.length === 0 ? (
+                          <p className="text-center text-lg text-gray-500">No Categories Found</p>
+                        ) : (
+                        <div>
+                            {categories.map((category, index) => (
+                                <details
+                                    key={index}
+                                    className="mb-4 border border-gray-300 rounded-lg p-4 bg-white"
+                                >
+                                    <summary className="flex  justify-between cursor-pointer">
+                                        <span className="flex items-center space-x-2">
+                                            <span className="text-2xl">{category.icon}</span>
+                                            <span className="text-lg font-medium">{category.name}</span>
+                                        </span>
+                                        <span>▼</span>
+                                    </summary>
+                                    {category.items.length > 0 ? (
+                                        <div className="mt-2 text-gray-600">
+                                            {category.items.map((item, itemIndex) => (
+                                                <div
+                                                    key={itemIndex}
+                                                    className="flex justify-between items-center px-6 py-2 border-b"
+                                                >
+                                                    <span className="flex-1">{item.name}</span>
+                                                    <span className="mr-5 text-right font-medium">{item.price}/-</span>
+                                                    {renderAddButton(item)}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <p className="text-gray-500 mt-2">No items available.</p>
+                                    )}
+                                </details>
                             ))}
-                        </ul>
-                        <hr className="my-4" />
-                        <p className="font-semibold text-gray-700">Subtotal: {subtotal}/-</p>
-                        <p className="font-semibold text-gray-700">Delivery Charge: {DeliveryCharge}/-</p>
-                        <h3 className="text-lg font-bold text-gray-900">Grand Total: {grandTotal}/-</h3>
-                        <div className="mt-6">
-                            <button
-                                onClick={handleProceedToCheckout}
-                                className="w-full px-4 py-2 bg-cadetblue text-white rounded hover:bg-cadetdark transition-colors"
-                            >
-                                Proceed to Checkout
-                            </button>
                         </div>
-                    </>
-                ) : (
-                    <p className="text-gray-500">Your bag is empty.</p>
-                )}
-                <button
-                    onClick={() => navigate("/services")}
-                    className="mt-6 w-full px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
-                >
-                    Back to Services
-                </button>
+                        )}
+
+                        {/* Bag Section */}
+                        <div className="bg-white shadow rounded-lg p-4">
+                            <h2 className="text-xl font-bold text-cadetdark">Your Bag</h2>
+
+                            {/* Show Selected Service Name */}
+                            {selectedService && (
+                                <div className="mt-2 text-lg font-medium text-cadetdark">
+                                    Service: <span className="text-cadetblue">{selectedService}</span>
+                                </div>
+                            )}
+
+                            {bag.items.length > 0 ? (
+                                <>
+                                    <ul>
+                                        {bag.items.map((bagItem, index) => (
+                                            <li
+                                                key={index}
+                                                className="flex justify-between items-center border-b-2 border-gray-200 py-2"
+                                            >
+                                                <span>{bagItem.name}</span>
+                                                <span>
+                                                    {bagItem.quantity} x ₹{bagItem.price} = ₹
+                                                    {bagItem.quantity * bagItem.price}
+                                                </span>
+                                            </li>
+                                        ))}
+                                    </ul>
+
+                                    <div className="mt-8">
+                                        <div className="flex justify-between">
+                                            <span>Sub Total</span>
+                                            <span>{bag.subtotal}/-</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span>Delivery Charge</span>
+                                            <span>{bag.deliveryCharge}/-</span>
+                                        </div>
+                                        <div className="flex justify-between font-bold">
+                                            <span>Grand Total</span>
+                                            <span>{bag.total}/-</span>
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-6">
+                                        <button
+                                            onClick={handleProceedToCheckout}
+                                            className="px-4 py-2 w-60 bg-cadetblue text-white rounded hover:bg-cadetdark transition-colors"
+                                        >
+                                            Proceed to Checkout
+                                        </button>
+                                    </div>
+                                </>
+                            ) : (
+                                <div className="flex flex-col items-center justify-center">
+                                    <p className="text-gray-900 text-2xl mt-14 pb-3 font-semibold">Empty!</p>
+                                    <img src={EmptyBag} alt="Empty Bag" className="w-32 h-32" />
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        {/* How to Order */}
+                        <section className="mt-12">
+                            <h2 className="text-2xl font-bold text-cadetdark">How to Order</h2>
+                            <ul className="mt-4 space-y-4">
+                                <li>📋 Select service from the available categories.</li>
+                                <li>⏰ Set your preferred schedule.</li>
+                                <li>🛍️ Place your order!</li>
+                            </ul>
+                        </section>
+
+                        {/* Details Section */}
+                        <section className="mt-12">
+                            <h2 className="text-2xl font-bold text-cadetdark">Details of Services</h2>
+                            <p className="mt-4 text-gray-600">
+                                Laun-Tail helps you find laundry services near you and ensures that
+                                your clothes are handled by professionals. Every customer’s laundry
+                                is washed with care to preserve their quality. Our services include:
+                            </p>
+                            <ul className="mt-4 list-disc pl-5 text-gray-600">
+                                <li>Trusted, Certified, and Skilled Launderers</li>
+                                <li>Best Products and Services</li>
+                                <li>Guaranteed Customer Satisfaction</li>
+                            </ul>
+                        </section>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        {/* Terms & Conditions Section */}
+                        <section className="mt-12">
+                            <h2 className="text-2xl font-bold text-cadetdark">Terms & Conditions</h2>
+                            <ul className="mt-4 list-disc pl-5 text-gray-600">
+                                <li>
+                                    After service completion, you have to pay through online or Cash on
+                                    Delivery.
+                                </li>
+                                <li>
+                                    Price may differ due to product fabrication and measurement of
+                                    their length.
+                                </li>
+                                <li>
+                                    Service delivery time might extend due to product type or quantity.
+                                </li>
+                            </ul>
+                        </section>
+
+                        {/* FAQ Section */}
+                        <section className="mt-12">
+                            <h2 className="text-2xl font-bold text-cadetdark">FAQ</h2>
+                            <div className="mt-4 space-y-4">
+                                {faqs.map((faq, index) => (
+                                    <details key={index} className="border p-4 rounded">
+                                        <summary>{faq}</summary>
+                                        <p className="mt-2 text-gray-600">
+                                            Details about "{faq}" will go here.
+                                        </p>
+                                    </details>
+                                ))}
+                            </div>
+                        </section>
+                    </div>
+
+                </div>
+
+                {/* Contact Section */}
+                <footer id="contact" className="bg-gradient-to-br from-cadetblue to-cadetdark text-white p-8">
+                    <div className="flex justify-between items-center">
+                        <div>
+                            <h3 className="font-bold text-lg"><a href="./contact">Contact Us</a></h3>
+                            <p>Laundry Wallah Service</p>
+                            <p>Email: LaundryWallah.1010@gmail.com</p>
+                            <p>Phone: +91 790-5739-950</p>
+                        </div>
+                        <div>
+                            <h3 className="font-bold text-lg">Follow Us</h3>
+                            <div className="flex space-x-4">
+                                <a href="https://www.facebook.com/" target="_blank" className="hover:text-yellow-400">Facebook</a>
+                                <a href="https://www.twitter.com" target="_blank" className="hover:text-yellow-400">Twitter</a>
+                                <a href="https://www.instagram.com" target="_blank" className="hover:text-yellow-400">Instagram</a>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
             </div>
-        </div>
+        </>
     );
 };
 

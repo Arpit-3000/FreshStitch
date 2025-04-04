@@ -1,15 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import "./LoginPage.css";
 import { useNavigate } from "react-router-dom";
 import google from "./sign-in-google.png";
 import facebook from "./sign-in-fb.png";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { auth, provider, signInWithPopup } from "../../../firebase";
+
 
 function LoginForm() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [user, setUser] = useState(null);
     const navigate = useNavigate();
 
     // Handle input changes
@@ -45,25 +48,37 @@ function LoginForm() {
         }
     };
 
-    // ✅ Google Sign-In (Updated)
+
+
+
+    // 🔹 Listen for auth state changes
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+            if (currentUser) {
+                setUser(currentUser);
+                navigate("/");  // Redirect if already signed in
+            } else {
+                setUser(null);
+            }
+        });
+
+        return () => unsubscribe(); // Cleanup listener on unmount
+    }, [navigate]);
+
+    // 🔹 Google Sign-In
     const handleGoogleLogin = async () => {
         try {
-            // ✅ Ensure the user is signed out first to force the account selection prompt
-            await auth.signOut();
-    
-            // ✅ Configure Google provider to always show the account selection popup
+            await signOut(auth); // Sign out first
             provider.setCustomParameters({ prompt: "select_account" });
     
-            // ✅ Now sign in with Google
             const result = await signInWithPopup(auth, provider);
             const user = result.user;
     
-            // ✅ Send Google user details to backend
             const response = await fetch("http://localhost:3000/auth/google", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    userId: user.uid,  // Store Firebase user ID
+                    userId: user.uid,
                     username: user.displayName,
                     email: user.email,
                 }),
@@ -71,23 +86,32 @@ function LoginForm() {
     
             if (response.ok) {
                 const data = await response.json();
+              
                 localStorage.setItem("token", data.token);
-                localStorage.setItem("user", JSON.stringify({ id: user.uid, name: user.displayName, email: user.email }));
+                localStorage.setItem("user", JSON.stringify(data.user));
+              
+                toast.success(`Welcome ${data.user.name}`, {
+                  position: "bottom-center",
+                  autoClose: 2000,
+                });
+              
+                // Delay navigation until after toast
+                setTimeout(() => {
+                  navigate("/");
+                }, 2000);
+              } else {
+                toast.error("Authentication failed");
+              }
     
-                toast.success(`Welcome ${user.displayName}!`);
-                navigate("/");
-                window.location.reload(); // Ensure state updates everywhere
-            } else {
-                toast.error("Google authentication failed");
-            }
         } catch (error) {
             toast.error("Google Sign-in failed");
+            console.error("Google Sign-in error:", error);
         }
     };
     
     return (
         <div className="mainn">
-            <ToastContainer />
+           
             <div className="register-page">
                 <p className="tagline">
                     Your Laundry, Our Priority!

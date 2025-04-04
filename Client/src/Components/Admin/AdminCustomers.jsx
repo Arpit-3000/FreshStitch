@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Sidebar from "./Sidebar";
+import Loader from "../Loader/Loader";
 
 const CustomersTable = () => {
   const [customers, setCustomers] = useState([]);
@@ -47,7 +48,7 @@ Best Regards,
         <h2 className="text-3xl font-bold mb-6 text-gray-700 font-serif">All Customers</h2>
 
         {loading ? (
-          <p className="text-center text-gray-500">Loading...</p>
+        <Loader/>
         ) : customers.length === 0 ? (
           <p className="text-center text-lg text-gray-500">No Customers Found</p>
         ) : (
