@@ -24,6 +24,7 @@ import Lehenga from './Components/Services/Lehenga.jsx';
 import Stitching from './Components/Services/Stitching.jsx';
 import Jumpsuit from './Components/Services/Jumpsuit.jsx';
 import SalwarSuit from './Components/Services/SalwarSuit.jsx';
+
 import Profile from './Components/Profile.jsx';
 import MyOrders from './Components/MyOrders/MyOrders.jsx';
 import AdminLogin from './Components/Admin/AdminLogin.jsx';
@@ -31,6 +32,9 @@ import AdminDashboard from './Components/Admin/AdminDashboard.jsx';
 import Products from './Components/Admin/Products.jsx';
 import AdminOrders from './Components/Admin/AdminOrders.jsx';
 import AdminCustomers from './Components/Admin/AdminCustomers.jsx';
+import AdminRegistration from './Components/Admin/AdminRegistration.jsx';
+import Shirt from './Components/Services/shirt.jsx';
+
 
 const AppRoutes = () => {
   const location = useLocation();
@@ -68,6 +72,7 @@ const AppRoutes = () => {
         <Route path="/lehenga" element={<Lehenga />} />
         <Route path="/jumpsuit" element={<Jumpsuit />} />
         <Route path="/Salwarsuit" element={<SalwarSuit />} />
+        <Route path="/shirt" element={<Shirt/>}/>
         <Route path="/RegisterPage" element={<RegisterForm />} />
         <Route path="/LoginPage" element={<LoginForm />} />
 
@@ -77,6 +82,8 @@ const AppRoutes = () => {
         <Route path="/admin-products" element={<Products />} />
         <Route path="/admin-orders" element={<AdminOrders />} />
         <Route path="/admin-customers" element={<AdminCustomers />} />
+        <Route path="/admin-registration" element={<AdminRegistration />} />
+        {/* <Route path="/admin-customers" element={<AdminCustomers />} /> */}
       </Routes>
     </>
   );

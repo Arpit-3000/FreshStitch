@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { FaShoppingCart, FaClipboardList, FaChartBar, FaMoneyBillWave } from "react-icons/fa";
-import Sidebar from "./Sidebar"; // ✅ Import Sidebar
+import Sidebar from "./Sidebar"; 
 
 const AdminDashboard = () => {
     const navigate = useNavigate();

@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import EmptyBag from "./EmptyBag.png";
-import salwarsuitbg from './salwarsuitbg.png';
-import CameraWithARShirt from "./CameraWithFilter";
-import anarkali_salwarsuit from "./anarkali_lehenga_filter.png";
+import shirt_bg from './shirt_bg.png';
+import shirt_white from "./shirt_white.png";
+import denim_shirt from "./denim_shirt.png";
+import checked_flannel_shirt from "./checked_flannel_shirt.png";
+import kurta_shirt from "./Kurta_Shirt.png";
+import CameraWithARShirt from "./CameraWithFilter"
+ // Added another shirt image
 
-const SalwarSuit = () => {
+const Shirt = () => {
     const [lehengaDesigns, setlehengaDesigns] = useState([]);
     const [bag, setBag] = useState({
         items: [],
@@ -13,14 +17,17 @@ const SalwarSuit = () => {
         deliveryCharge: 10,
         total: 10
     });
-    const [showCamera, setShowCamera] = useState(false);
-    const [selectedFilterImage, setSelectedFilterImage] = useState(null);
+
     const shirts = [
-        { name: "Anarkali Salwar Suit", image: anarkali_salwarsuit },
-        //    { name: "Casual Denim Shirt", image: denim_shirt }, 
-        //    { name: "Checked Flannel Shirt", image: checked_flannel_shirt },
-        //    { name: "Kurta Shirt", image: kurta_shirt},
+        { name: "White Shirt", image: shirt_white },
+        { name: "Casual Denim Shirt", image: denim_shirt }, 
+        { name: "Checked Flannel Shirt", image: checked_flannel_shirt },
+        { name: "Kurta Shirt", image: kurta_shirt},
     ];
+    
+
+    const [showCamera, setShowCamera] = useState(false);
+const [selectedFilterImage, setSelectedFilterImage] = useState(null);
 
     const navigate = useNavigate();
 
@@ -30,7 +37,7 @@ const SalwarSuit = () => {
         if (savedBag) {
             setBag(JSON.parse(savedBag));
         }
-        fetch("http://localhost:4000/api/SalwarSuitDesigns")
+        fetch("http://localhost:4000/api/ShirtDesigns")
             .then(response => response.json())
             .then(data => setlehengaDesigns(data))
             .catch(error => console.error("Error fetching lehenga designs:", error));
@@ -121,14 +128,10 @@ const SalwarSuit = () => {
             </div>
         );
     };
-
-    const getImageForShirt = (shirtName) => {
-        const shirt = shirts.find((s) => s.name === shirtName);
-        return shirt ? shirt.image : "";
+    const getImageForShirt = (name) => {
+        const shirt = shirts.find(s => s.name === name);
+        return shirt ? shirt.image : shirt_white; // fallback image
     };
-    
-
-
 
     return (
         <>
@@ -140,30 +143,28 @@ const SalwarSuit = () => {
                             "polygon(0% 0%, 100% 0%, 100% 90%, 95% 100%, 90% 90%, 85% 100%, 80% 90%, 75% 100%, 70% 90%, 65% 100%, 60% 90%, 55% 100%, 50% 90%, 45% 100%, 40% 90%, 35% 100%, 30% 90%, 25% 100%, 20% 90%, 15% 100%, 10% 90%, 5% 100%, 0% 90%)",
                     }}
                 >
-                    <img src={salwarsuitbg} className="h-full object-cover" alt="Lehenga Background" />
-                    <h1 className="absolute inset-0 flex top-20 left-2/4 text-5xl font-bold text-amber-400 ">Salwar Suit Designs</h1>
-                    <h6 className="absolute inset-0 flex top-40 left-2/4 text-2xl font-bold text-amber-400 ">Get your Salwar Suit, where every stitch speaks elegance.</h6>
+                    <img src={shirt_bg} className="h-full object-cover" alt="Shirt Background" />
+                    <h1 className="absolute inset-0 flex top-20 left-2/4 text-5xl font-bold text-amber-400 ">Shirt Designs</h1>
+                    <h6 className="absolute inset-0 flex top-40 left-2/4 text-2xl font-bold text-amber-400 ">Get your Shirts, where every stitch speaks elegance.</h6>
                 </div>
-                <div className="container  mx-20 mr-2 py-4 mt-10">
-
-                    <div className="flex gap-6 ">
+                <div className="container mx-20 mr-2 py-4 mt-10">
+                    <div className="flex gap-6">
                         <div className="space-y-6">
                             {lehengaDesigns.map((lehenga, index) => (
                                 <div key={index} className="flex items-center border border-gray-300 rounded-lg p-4 bg-white shadow-md">
-                                    <img src={lehenga.image} alt={lehenga.name} className="w-52 h-52 object-cover rounded-md mr-6" />
+                                    <img src={getImageForShirt(lehenga.name)} alt={lehenga.name} className="w-52 h-52 object-cover rounded-md mr-6" />
                                     <div className="flex-1 text-left">
                                         <h2 className="text-xl font-semibold mb-2">{lehenga.name}</h2>
                                         <p className="text-gray-600 text-sm">{lehenga.description}</p>
                                         <p className="text-lg font-semibold mt-2">₹{lehenga.price}</p>
                                         <div className="flex items-center mt-2">
                                             {renderAddButton(lehenga)}
-
                                         </div>
                                     </div>
                                 </div>
                             ))}
                         </div>
-                        <div className="bg-white shadow rounded-lg p-4 w-3/6 ">
+                        <div className="bg-white shadow rounded-lg p-4 w-2/6">
                             <h2 className="text-xl font-bold text-cadetdark">Your Bag</h2>
                             {bag.items.length > 0 ? (
                                 <>
@@ -213,22 +214,24 @@ const SalwarSuit = () => {
                             </button>
                         </div>
                     </div>
-                    {showCamera && (
-                        <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-80 flex items-center justify-center z-50">
-                            <CameraWithARShirt
-                                filterImage={selectedFilterImage}
-                                onClose={() => setShowCamera(false)}
-                            />
-                            <button
-                                onClick={() => setShowCamera(false)}
-                                className="absolute top-5 right-5 bg-red-600 text-white px-4 py-2 rounded"
-                            >
-                                Close
-                            </button>
-                        </div>
-                    )}
                 </div>
-                {/* Contact Section */}
+
+                {showCamera && (
+    <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-80 flex items-center justify-center z-50">
+        <CameraWithARShirt
+            filterImage={selectedFilterImage}
+            onClose={() => setShowCamera(false)}
+        />
+        <button
+            onClick={() => setShowCamera(false)}
+            className="absolute top-5 right-5 bg-red-600 text-white px-4 py-2 rounded"
+        >
+            Close
+        </button>
+    </div>
+)}
+
+                {/* Footer */}
                 <footer id="contact" className="bg-gradient-to-br from-cadetblue to-cadetdark text-white p-8 h-72">
                     <div className="flex justify-between items-center">
                         <div>
@@ -252,4 +255,4 @@ const SalwarSuit = () => {
     );
 };
 
-export default SalwarSuit;
+export default Shirt;

@@ -180,7 +180,7 @@ const Home = () => {
             title="Tailoring"
             description="Expert tailoring services for all garments."
             imgSrc={sewing}
-            link="/sewing"
+            link="/stitching"
           />
           <ServiceCard
             title="Alterations"

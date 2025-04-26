@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "./Sidebar";
+import Loader from "../Loader/Loader";
 
 const OrdersTable = () => {
   const [orders, setOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [loading,setLoading]=useState(true)
 
   // Fetch orders from backend
   useEffect(() => {
@@ -15,6 +17,7 @@ const OrdersTable = () => {
           totalItems: order.items && Array.isArray(order.items) ? order.items.length : 0
         }));
         setOrders(formattedData);
+        setLoading(false);
       })
       .catch((err) => console.error("Error fetching orders:", err));
   }, []);
@@ -34,9 +37,12 @@ const OrdersTable = () => {
           prevOrders.map((order) =>
             order._id === id ? { ...order, orderStatus: updatedOrder.orderStatus } : order
           )
+         
         );
+        
       } else {
         console.error("Failed to update order status");
+        setLoading(false);
       }
     } catch (error) {
       console.error("Error updating order status:", error);
@@ -55,6 +61,7 @@ const OrdersTable = () => {
       <div className="p-6">
         <h2 className="text-3xl font-semibold font-serif mb-4">All Orders</h2>
         <div className="overflow-x-auto max-h-[620px] border p-4 rounded-lg shadow-md">
+       
           <table className="w-full border-collapse">
             <thead className="bg-gray-100">
               <tr>
@@ -69,7 +76,13 @@ const OrdersTable = () => {
                 <th className="p-3 text-center">Action</th>
               </tr>
             </thead>
+            {loading ? (
+                        <Loader/>
+                        ) : orders.length === 0 ? (
+                          <p className="text-center text-lg text-gray-500">No Orders Found</p>
+                        ) : (
             <tbody>
+            
               {orders.map((order, index) => (
                 <tr key={order._id} className="border-b hover:bg-gray-100">
                   <td className="p-3">{index + 1}</td>
@@ -112,8 +125,12 @@ const OrdersTable = () => {
                   </td>
                 </tr>
               ))}
+            
             </tbody>
+          )}
+         
           </table>
+                        
         </div>
         {orders.length === 0 && <p className="text-center text-gray-500 mt-4">No orders available</p>}
 

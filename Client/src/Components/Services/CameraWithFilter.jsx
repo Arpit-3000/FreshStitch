@@ -1,0 +1,138 @@
+import React, { useEffect, useRef } from "react";
+import { Pose } from "@mediapipe/pose";
+import { Camera } from "@mediapipe/camera_utils";
+
+const lerp = (a, b, t) => a * (1 - t) + b * t;
+
+const CameraWithARShirt = ({ filterImage, onClose }) => {
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
+  const shirtImgRef = useRef(null);
+
+  const lastState = useRef({
+    x: 320,
+    y: 240,
+    width: 150,
+    height: 200,
+  });
+
+  useEffect(() => {
+    const shirtImg = new Image();
+    shirtImg.src = filterImage;
+    shirtImg.onload = () => {
+      shirtImgRef.current = shirtImg;
+    };
+
+    const pose = new Pose({
+      locateFile: (file) =>
+        `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
+    });
+
+    pose.setOptions({
+      modelComplexity: 1,
+      smoothLandmarks: true,
+      enableSegmentation: false,
+      minDetectionConfidence: 0.5,
+      minTrackingConfidence: 0.5,
+    });
+
+    pose.onResults(onResults);
+
+    let camera = null;
+
+    if (videoRef.current) {
+      camera = new Camera(videoRef.current, {
+        onFrame: async () => {
+          await pose.send({ image: videoRef.current });
+        },
+        width: 640,
+        height: 480,
+      });
+      camera.start();
+    }
+
+    return () => {
+      if (camera) camera.stop();
+    };
+  }, [filterImage]);
+
+  const onResults = (results) => {
+    const canvasCtx = canvasRef.current.getContext("2d");
+    canvasCtx.clearRect(0, 0, 640, 480);
+    canvasCtx.drawImage(results.image, 0, 0, 640, 480);
+
+    if (!shirtImgRef.current || !results.poseLandmarks) return;
+
+    const lm = results.poseLandmarks;
+    const leftShoulder = lm[11];
+    const rightShoulder = lm[12];
+    const leftHip = lm[23];
+    const rightHip = lm[24];
+
+    if (leftShoulder && rightShoulder && leftHip && rightHip) {
+      const x1 = leftShoulder.x * 640;
+      const y1 = leftShoulder.y * 480;
+      const x2 = rightShoulder.x * 640;
+      const y2 = rightShoulder.y * 480;
+      
+      const midX = (x1 + x2) / 2;
+      const midY = (y1 + y2) / 2;
+      
+      const shoulderWidth = Math.abs(x2 - x1); // Only x-axis distance
+      const hipY = ((leftHip.y + rightHip.y) / 2) * 480;
+      
+      const height = hipY - midY + 40; // torso height + buffer
+      
+      const shirtWidth = shoulderWidth * 1.8; // small 10% buffer
+      const shirtHeight = height * 1.2; 
+      
+      // Smoothing
+      lastState.current.x = lerp(lastState.current.x, midX, 0.3);
+      lastState.current.y = lerp(lastState.current.y, midY, 0.3);
+      lastState.current.width = lerp(lastState.current.width, shirtWidth, 0.3);
+      lastState.current.height = lerp(lastState.current.height, shirtHeight, 0.3);
+
+      // Adjust image to move upwards (decrease y position to lift it)
+      const verticalOffset = -80; // Move the shirt image upwards by 30 pixels
+      lastState.current.y += verticalOffset;
+
+      // Draw image
+      canvasCtx.globalAlpha = 0.95;
+      canvasCtx.drawImage(
+        shirtImgRef.current,
+        lastState.current.x - lastState.current.width / 2,
+        lastState.current.y,
+        lastState.current.width,
+        lastState.current.height
+      );
+      canvasCtx.globalAlpha = 1;
+    }
+  };
+
+  return (
+    <div className="relative w-full max-w-xl mx-auto">
+      <video
+        ref={videoRef}
+        className="hidden"
+        width="640"
+        height="480"
+        playsInline
+        muted
+      ></video>
+      <canvas
+        ref={canvasRef}
+        width="840"
+        height="480"
+        className="rounded shadow"
+      />
+      <button
+        onClick={onClose}
+        className="absolute top-2 right-2 bg-red-600 text-white px-3 py-1 rounded"
+      >
+        Close
+      </button>
+    </div>
+  );
+};
+
+export default CameraWithARShirt;

@@ -23,7 +23,7 @@ const Sidebar = () => {
     return (
         <aside className="w-64 bg-gradient-to-b from-cadetblue to-cadetdark text-white p-5 h-screen">
             <h2 className="text-2xl font-bold text-cream mb-10 mt-6 font-serif text-center">
-                Smart Dhopa
+                Fresh Stitch
             </h2>
             <nav className="space-y-3">
                 {menuItems.map((item) => (

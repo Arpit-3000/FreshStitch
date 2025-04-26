@@ -1,16 +1,31 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const detect = require('detect-port').default || require('detect-port');
+
 const LaundryCategory = require("./laundrycategorySchema");
 const TailoringCategory = require("./tailoringCategorySchema");
 const Lehenga = require("./lehengaSchema");
 const Jumpsuit = require("./jumpsuitSchema");
 const SalwarSuit = require("./salwarsuitSchema");
+const Shirt = require("./shirtSchema");
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 const port = 4000;
+
+
+detect(port).then(freePort => {
+  if (freePort !== port) {
+      console.error(` Port ${port} is already in use`);
+      process.exit(1);
+  } else {
+      app.listen(port, () => {
+          console.log(` Server running on http://localhost:${port}`);
+      });
+  }
+});
 
 // MongoDB connection
 mongoose.connect("mongodb://localhost:27017/ExistingUsers", {
@@ -350,9 +365,14 @@ app.get("/api/jumpsuitDesigns", async (req, res) => {
   }
 });
 
-
-
-// Start Server
-app.listen(port, () => {
-  console.log(`🚀 Server running on port ${port}`);
+app.get("/api/ShirtDesigns", async (req, res) => {
+  try {
+    const ShirtDesigns = await Shirt.find();
+    res.json(ShirtDesigns);
+  } catch (err) {
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 });
+
+
+

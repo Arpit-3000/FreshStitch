@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import backgroundImage from './back.jpg';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
+import SolanaPaymentModal from "../SolanaPaymentModal";
+
 
 const BagSection = () => {
   const [pickupDate, setPickupDate] = useState('');
@@ -10,13 +12,14 @@ const BagSection = () => {
   const [email, setContactEmail] = useState('');
   const [mobileNumber, setMobileNumber] = useState('');
   const [address, setAddress] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState('cod');
+  const [paymentMethod, setPaymentMethod] = useState('Cash on Delivery');
 
+  
 
 
   const navigate = useNavigate();
   useEffect(() => {
-    window.scrollTo(0, 0); // Scroll to top when this page loads
+    window.scrollTo(0, 0); 
   }, []);
   const location = useLocation();
   const {
@@ -28,10 +31,37 @@ const BagSection = () => {
   } = location.state || {};
   console.log(bag);
 
-  // const subtotal = bag.reduce((total, item) => total + item.price * item.quantity, 0);
-  // const deliveryCharge = 50; // You can change this to a dynamic value if necessary
-  // const grandTotal = subtotal + deliveryCharge;
+  
 
+  const [showSolanaModal, setShowSolanaModal] = useState(false);
+
+  const [solAmount, setSolAmount] = useState(0);
+
+useEffect(() => {
+  const fetchConversionRate = async () => {
+    try {
+      const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=inr');
+      const data = await res.json();
+      const inrToSolRate = 1 / data.solana.inr;
+      const calculatedSol = total * inrToSolRate;
+      setSolAmount(Number(calculatedSol.toFixed(6))); // round to 6 decimals
+    } catch (err) {
+      console.error("Failed to fetch SOL price", err);
+    }
+  };
+
+  fetchConversionRate();
+}, [total]);
+
+
+
+  useEffect(() => {
+    if (paymentMethod === "phantomwallet") {
+      setShowSolanaModal(true);
+    } else {
+      setShowSolanaModal(false);
+    }
+  }, [paymentMethod]);
 
   const handlePaymentChange = (e) => {
     setPaymentMethod(e.target.value);
@@ -56,7 +86,7 @@ const BagSection = () => {
 
 
     navigate('/orderhistory', {
-      state: orderDetails, // Passing the state with all details
+      state: orderDetails, 
     });
   };
 
@@ -178,26 +208,8 @@ const BagSection = () => {
                   <label className="text-sm">Net Banking</label>
                 </div>
                 <div className="flex items-center">
-                  <input
-                    type="radio"
-                    name="paymentMethod"
-                    value="upi"
-                    className="mr-3"
-                    checked={paymentMethod === 'upi'}
-                    onChange={handlePaymentChange}
-                  />
-                  <label className="text-sm">UPI Gateway</label>
-                </div>
-                <div className="flex items-center">
-                  <input
-                    type="radio"
-                    name="paymentMethod"
-                    value="mobiwik"
-                    className="mr-3"
-                    checked={paymentMethod === 'mobiwik'}
-                    onChange={handlePaymentChange}
-                  />
-                  <label className="text-sm">Mobiwik</label>
+                  <input type="radio" name="paymentMethod" value="phantomwallet" className="mr-3" checked={paymentMethod === 'phantomwallet'} onChange={handlePaymentChange} />
+                  <label className="text-sm">Connect to Wallet (Phantom)</label>
                 </div>
               </div>
             </div>
@@ -252,17 +264,22 @@ const BagSection = () => {
             ) : (
               <p>Your bag is empty.</p>
             )}
-            <button
-              onClick={() => navigate("/orderHistory")}
-              className="mt-6  px-4 py-2 w-60  bg-red-500 text-white rounded hover:bg-gray-600 transition-colors"
-            >
-              Place Order
-            </button>
 
           </div>
 
         </div>
       </div>
+       {/* Solana Payment Modal */}
+       <SolanaPaymentModal
+        isOpen={showSolanaModal}
+        onClose={() => {
+          setShowSolanaModal(false);
+          setPaymentMethod("Solana Payment");
+        }}
+        amountSOL={0.00001}
+        receiverWallet="94QZP1C5xBgPpDfB3foZujiLSQpTuXpYFev9u2pMN7i9"
+      />
+
       {/*Contact section*/}
       <footer id="contact" className="bg-gradient-to-br from-cadetblue to-cadetdark text-white p-8">
         <div className="flex justify-between items-center">
