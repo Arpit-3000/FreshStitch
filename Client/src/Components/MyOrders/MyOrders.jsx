@@ -198,7 +198,7 @@ const MyOrders = () => {
       return;
     }
 
-    fetch("http://localhost:3000/place-order")
+    fetch("http://localhost:3000/api/orders/place-order")
       .then((response) => {
         if (!response.ok) throw new Error("Failed to fetch orders");
         return response.json();

@@ -30,7 +30,7 @@ const SalwarSuit = () => {
         if (savedBag) {
             setBag(JSON.parse(savedBag));
         }
-        fetch("http://localhost:4000/api/SalwarSuitDesigns")
+        fetch("http://localhost:3000/api/SalwarSuitDesigns")
             .then(response => response.json())
             .then(data => setlehengaDesigns(data))
             .catch(error => console.error("Error fetching lehenga designs:", error));

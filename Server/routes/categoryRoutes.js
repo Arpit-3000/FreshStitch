@@ -1,42 +1,15 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const cors = require("cors");
-const detect = require('detect-port').default || require('detect-port');
+const router = express.Router();
+const LaundryCategory = require("../models/services/laundrycategorySchema");
+const TailoringCategory = require("../models/services/tailoringCategorySchema");
+const Lehenga = require("../models/tailoring_items/lehengaSchema");
+const Jumpsuit = require("../models/tailoring_items/jumpsuitSchema");
+const SalwarSuit = require("../models/tailoring_items/salwarsuitSchema");
+const Shirt = require("../models/tailoring_items/shirtSchema");
 
-const LaundryCategory = require("./laundrycategorySchema");
-const TailoringCategory = require("./tailoringCategorySchema");
-const Lehenga = require("./lehengaSchema");
-const Jumpsuit = require("./jumpsuitSchema");
-const SalwarSuit = require("./salwarsuitSchema");
-const Shirt = require("./shirtSchema");
-
-const app = express();
-app.use(express.json());
-app.use(cors());
-const port = 4000;
-
-
-detect(port).then(freePort => {
-  if (freePort !== port) {
-      console.error(` Port ${port} is already in use`);
-      process.exit(1);
-  } else {
-      app.listen(port, () => {
-          console.log(` Server running on http://localhost:${port}`);
-      });
-  }
-});
-
-// MongoDB connection
-mongoose.connect("mongodb://localhost:27017/ExistingUsers", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-}).then(() => console.log("MongoDB Connected"))
-  .catch(err => console.error("MongoDB connection error:", err));
-
-
-// ✅ Get Items from "Men's Wear" Category
-app.get("/api/mensWear", async (req, res) => {
+            // -- MEN's Wear Routes
+router.get("/mensWear", async (req, res) => {
   try {
     const mensCategory = await LaundryCategory.findOne({ name: "Men's Wear" });
 
@@ -51,7 +24,7 @@ app.get("/api/mensWear", async (req, res) => {
 });
 
 // ✅ Add a New Item to "Men's Wear"
-app.post("/api/mensWear", async (req, res) => {
+router.post("/mensWear", async (req, res) => {
   try {
     const { name, price } = req.body;
     let mensCategory = await LaundryCategory.findOne({ name: "Men's Wear" });
@@ -78,7 +51,7 @@ app.post("/api/mensWear", async (req, res) => {
 });
 
 // ✅ Delete an Item from "Men's Wear"
-app.delete("/api/mensWear/:id", async (req, res) => {
+router.delete("/mensWear/:id", async (req, res) => {
   try {
     const { id } = req.params;
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -103,7 +76,7 @@ app.delete("/api/mensWear/:id", async (req, res) => {
 
 
 // ✅ Edit an item in "Men's Wear"
-app.put("/api/menswear/:id", async (req, res) => {
+router.put("/menswear/:id", async (req, res) => {
   try {
     const { id } = req.params; // Item's ObjectId
     const { name, price } = req.body; // Updated details
@@ -126,8 +99,8 @@ app.put("/api/menswear/:id", async (req, res) => {
   }
 });
 
-// ✅ Get Items from "Women's Wear"
-app.get("/api/womensWear", async (req, res) => {
+              // -- WOMEN's Wear Routes
+router.get("/womensWear", async (req, res) => {
   try {
     const womensCategory = await LaundryCategory.findOne({ name: "Women's Wear" });
 
@@ -142,7 +115,7 @@ app.get("/api/womensWear", async (req, res) => {
 });
 
 // ✅ Add a New Item to "Women's Wear"
-app.post("/api/womensWear", async (req, res) => {
+router.post("/womensWear", async (req, res) => {
   try {
     const { name, price } = req.body;
     let womensCategory = await LaundryCategory.findOne({ name: "Women's Wear" });
@@ -170,7 +143,7 @@ app.post("/api/womensWear", async (req, res) => {
 
 // ✅ Delete an Item from "Women's Wear"
 
-app.delete("/api/womensWear/:id", async (req, res) => {
+router.delete("/womensWear/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -197,7 +170,7 @@ app.delete("/api/womensWear/:id", async (req, res) => {
 
 
 // ✅ Edit an item in "Women's Wear"
-app.put("/api/womenswear/:id", async (req, res) => {
+router.put("/womenswear/:id", async (req, res) => {
   try {
     const { id } = req.params; // Item's ObjectId
     const { name, price } = req.body; // Updated details
@@ -220,8 +193,8 @@ app.put("/api/womenswear/:id", async (req, res) => {
   }
 });
 
-// ✅ Get Items from "Household"
-app.get("/api/household", async (req, res) => {
+          // -- HOUSEHOLD Routes 
+router.get("/household", async (req, res) => {
   try {
     const householdCategory = await LaundryCategory.findOne({ name: "Household" });
 
@@ -237,7 +210,7 @@ app.get("/api/household", async (req, res) => {
 
 
 // ✅ Add a New Item to "Household"
-app.post("/api/household", async (req, res) => {
+router.post("/household", async (req, res) => {
   try {
     const { name, price } = req.body;
     let householdCategory = await LaundryCategory.findOne({ name: "Household" });
@@ -266,7 +239,7 @@ app.post("/api/household", async (req, res) => {
 
 
 // ✅ Delete an Item from "Household"
-app.delete("/api/household/:id", async (req, res) => {
+router.delete("/household/:id", async (req, res) => {
   try {
     const { id } = req.params;
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -291,7 +264,7 @@ app.delete("/api/household/:id", async (req, res) => {
 
 
 // ✅ Edit an item in "Household"
-app.put("/api/household/:id", async (req, res) => {
+router.put("/household/:id", async (req, res) => {
   try {
     const { id } = req.params; // Item's ObjectId
     const { name, price } = req.body; // Updated details
@@ -315,8 +288,8 @@ app.put("/api/household/:id", async (req, res) => {
 });
 
 
-// ✅ Get All Laundry Categories
-app.get("/api/laundryCategories", async (req, res) => {
+          //Get All Laundry Categories
+router.get("/laundryCategories", async (req, res) => {
   try {
     const categories = await LaundryCategory.find();
     res.json(categories);
@@ -325,8 +298,8 @@ app.get("/api/laundryCategories", async (req, res) => {
   }
 });
 
-// ✅ Get All Tailoring Categories
-app.get("/api/tailoringcategories", async (req, res) => {
+          //Get All Tailoring Categories
+router.get("/tailoringCategories", async (req, res) => {
   try {
     const categories = await TailoringCategory.find();
     res.json(categories);
@@ -335,8 +308,8 @@ app.get("/api/tailoringcategories", async (req, res) => {
   }
 });
 
-// ✅ Get All Lehenga Designs
-app.get("/api/lehengaDesigns", async (req, res) => {
+          //Get All Lehenga Designs
+router.get("/lehengaDesigns", async (req, res) => {
   try {
     const lehengaDesigns = await Lehenga.find();
     res.json(lehengaDesigns);
@@ -345,8 +318,8 @@ app.get("/api/lehengaDesigns", async (req, res) => {
   }
 });
 
-// ✅ Get All Salwar Suit Designs
-app.get("/api/SalwarSuitDesigns", async (req, res) => {
+          //Get All Salwar Suit Designs
+router.get("/SalwarSuitDesigns", async (req, res) => {
   try {
     const salwarSuitDesigns = await SalwarSuit.find();
     res.json(salwarSuitDesigns);
@@ -355,8 +328,8 @@ app.get("/api/SalwarSuitDesigns", async (req, res) => {
   }
 });
 
-// ✅ Get All Jumpsuit Designs
-app.get("/api/jumpsuitDesigns", async (req, res) => {
+          //Get All Jumpsuit Designs
+router.get("/jumpsuitDesigns", async (req, res) => {
   try {
     const jumpsuitDesigns = await Jumpsuit.find();
     res.json(jumpsuitDesigns);
@@ -365,7 +338,8 @@ app.get("/api/jumpsuitDesigns", async (req, res) => {
   }
 });
 
-app.get("/api/ShirtDesigns", async (req, res) => {
+          //Get All Shirt Designs
+router.get("/ShirtDesigns", async (req, res) => {
   try {
     const ShirtDesigns = await Shirt.find();
     res.json(ShirtDesigns);
@@ -375,4 +349,4 @@ app.get("/api/ShirtDesigns", async (req, res) => {
 });
 
 
-
+module.exports = router;

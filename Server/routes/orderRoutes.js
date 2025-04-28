@@ -1,90 +1,10 @@
 const express = require("express");
-const jwt = require("jsonwebtoken");
-const cors = require("cors");
-const userDetails = require("./loginSchema.js");
-require("./config.js");
-const Order = require("./orderSchema.js");
+const Order = require("../models/orders/orderSchema.js");
 
-const app = express();
-const PORT = 3000;
-const JWT_SECRET = "123456789";
+const router = express.Router();
 
-// Middleware
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-
-// ✅ Fix for Google Authentication Popup Issue
-app.use((req, res, next) => {
-    res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
-    res.setHeader("Cross-Origin-Embedder-Policy", "credentialless");
-    next();
-});
-
-// ✅ Google Login Route
-app.post("/auth/google", async (req, res) => {
-    const { userId, email, username } = req.body;
-
-    try {
-        let user = await userDetails.findOne({ email });
-    
-        if (!user) {
-            user = new userDetails({
-                userId,
-                email,
-                username,
-                isLoggedIn: true
-            });
-    
-            await user.save()
-                .then(savedUser => console.log("✅ New user saved:", savedUser))
-                .catch(err => console.error("❌ Save error:", err)); // <== log here!
-        } else {
-            user.userId = userId;
-            user.username = username;
-            user.isLoggedIn = true;
-            await user.save();
-            console.log("🔁 Existing user updated:", user);
-        }
-    
-        const token = email;
-    
-        res.status(200).json({
-            token,
-            message: "Google Login Successful",
-            user: {
-                id: user.userId,
-                name: user.username,
-                email: user.email
-            }
-        });
-    } catch (error) {
-        console.error("❌ Google Auth Error:", error);
-        res.status(500).json({ message: "Authentication Failed" });
-    }
-    
-});
-
-// ✅ Login Route
-app.post("/login", async (req, res) => {
-    try {
-        const user = await userDetails.findOne({ username: req.body.username });
-
-        if (!user || user.password !== req.body.password) {
-            return res.status(401).json({ message: "Wrong password or username" });
-        }
-
-        const token = jwt.sign({ userId: user._id, username: user.username }, JWT_SECRET, { expiresIn: "7d" });
-
-        res.status(200).json({ token });
-    } catch (error) {
-        console.error("Login error:", error);
-        res.status(500).json({ message: "Server error" });
-    }
-});
-
-// ✅ Place Order Route
-app.post("/place-order", async (req, res) => {
+// Place Order
+router.post("/place-order", async (req, res) => {
     const {
         pickupDate,
         pickupTime,
@@ -93,7 +13,6 @@ app.post("/place-order", async (req, res) => {
         mobileNumber,
         address,
         paymentMethod,
-        currentDate,
         bag,
         subtotal,
         DeliveryCharge
@@ -101,12 +20,10 @@ app.post("/place-order", async (req, res) => {
 
     const tokenEmail = req.headers.authorization;
 
-    // Email and bag must be present
     if (!email || !bag || bag.length === 0) {
         return res.status(400).json({ message: "Email and bag items are required to place an order." });
     }
 
-    // ✅ Only check if tokenEmail matches the entered email
     if (!tokenEmail || tokenEmail.toLowerCase() !== email.toLowerCase()) {
         return res.status(403).json({ message: "Email mismatch. You are not authorized to place this order." });
     }
@@ -134,16 +51,14 @@ app.post("/place-order", async (req, res) => {
 
         res.status(200).json({ message: "Order placed successfully", Order: savedOrder });
     } catch (error) {
-        console.error("Error placing order:", error);
         res.status(500).json({ message: "Error placing order" });
     }
 });
 
-
-// ✅ Fetch All Orders
-app.get("/place-order", async (req, res) => {
+// Fetch all Orders
+router.get("/place-order", async (req, res) => {
     try {
-        const orders = await Order.find().lean(); // Lean for performance optimization
+        const orders = await Order.find().lean();
 
         if (!orders.length) {
             return res.status(404).json({ message: "No orders found" });
@@ -158,18 +73,15 @@ app.get("/place-order", async (req, res) => {
 
         res.json(formattedOrders);
     } catch (error) {
-        console.error("Error fetching orders:", error);
         res.status(500).json({ error: "Error fetching orders" });
     }
 });
 
-// ✅ Update Order Status
-app.put("/place-order/:id", async (req, res) => {
+// Update Order Status
+router.put("/place-order/:id", async (req, res) => {
     try {
         const { id } = req.params;
         const { status } = req.body;
-
-        console.log("Received status update:", status);
 
         const updatedOrder = await Order.findByIdAndUpdate(id, { orderStatus: status }, { new: true });
 
@@ -177,17 +89,14 @@ app.put("/place-order/:id", async (req, res) => {
             return res.status(404).json({ error: "Order not found" });
         }
 
-        console.log("Updated order:", updatedOrder);
-
         res.json(updatedOrder);
     } catch (error) {
-        console.error("Error updating order status:", error);
         res.status(500).json({ error: "Failed to update order status" });
     }
 });
 
-// ✅ Order Statistics (Dashboard)
-app.get("/order-stats", async (req, res) => {
+// Order Statistics
+router.get("/order-stats", async (req, res) => {
     try {
         const totalOrders = await Order.countDocuments();
         const pendingOrders = await Order.countDocuments({
@@ -206,13 +115,12 @@ app.get("/order-stats", async (req, res) => {
             totalEarnings: totalEarnings.length > 0 ? totalEarnings[0].total : 0
         });
     } catch (error) {
-        console.error("Error fetching order stats:", error);
         res.status(500).json({ message: "Failed to fetch order statistics" });
     }
 });
 
-// ✅ Weekly Orders Graph Data
-app.get("/weekly-orders", async (req, res) => {
+// Weekly Orders Graph Data
+router.get("/weekly-orders", async (req, res) => {
     try {
         const weeklyOrders = await Order.aggregate([
             {
@@ -234,12 +142,8 @@ app.get("/weekly-orders", async (req, res) => {
 
         res.json(formattedData);
     } catch (error) {
-        console.error("Error fetching weekly orders:", error);
         res.status(500).json({ message: "Failed to fetch weekly orders" });
     }
 });
 
-// ✅ Start Server
-app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
-});
+module.exports = router;

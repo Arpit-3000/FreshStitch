@@ -10,7 +10,7 @@ const HouseholdPopup = ({ onClose }) => {
 
     // Fetch household products from API
     useEffect(() => {
-        fetch("http://localhost:4000/api/household")
+        fetch("http://localhost:3000/api/household")
             .then((res) => res.json())
             .then((data) => setProducts(data))
             .catch((err) => console.error("Error fetching data:", err));
@@ -25,7 +25,7 @@ const HouseholdPopup = ({ onClose }) => {
 
         const newProduct = { name: productName, price: Number(productPrice) };
 
-        const response = await fetch("http://localhost:4000/api/household", {
+        const response = await fetch("http://localhost:3000/api/household", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(newProduct),
@@ -42,7 +42,7 @@ const HouseholdPopup = ({ onClose }) => {
     // Delete product
     const handleDeleteProduct = async (id) => {
         try {
-            const response = await fetch(`http://localhost:4000/api/household/${id}`, {
+            const response = await fetch(`http://localhost:3000/api/household/${id}`, {
                 method: "DELETE",
             });
 
@@ -73,7 +73,7 @@ const HouseholdPopup = ({ onClose }) => {
         const updatedProduct = { name: productName, price: Number(productPrice) };
 
         try {
-            const response = await fetch(`http://localhost:4000/api/household/${editingProduct}`, {
+            const response = await fetch(`http://localhost:3000/api/household/${editingProduct}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(updatedProduct),

@@ -7,7 +7,7 @@ const CustomersTable = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:3000/place-order")
+    fetch("http://localhost:3000/api/orders/place-order")
       .then((res) => res.json())
       .then((data) => {
         setCustomers(data);

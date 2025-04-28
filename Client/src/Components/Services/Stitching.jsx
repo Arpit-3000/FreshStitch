@@ -47,7 +47,7 @@ const Stitching = () => {
     
         const fetchCategories = async () => {
             try {
-                const response = await fetch("http://localhost:4000/api/tailoringcategories");
+                const response = await fetch("http://localhost:3000/api/tailoringCategories");
                 const data = await response.json();
                 setCategories(data);
                 setLoading(false);

@@ -37,7 +37,7 @@ const [selectedFilterImage, setSelectedFilterImage] = useState(null);
         if (savedBag) {
             setBag(JSON.parse(savedBag));
         }
-        fetch("http://localhost:4000/api/ShirtDesigns")
+        fetch("http://localhost:3000/api/ShirtDesigns")
             .then(response => response.json())
             .then(data => setlehengaDesigns(data))
             .catch(error => console.error("Error fetching lehenga designs:", error));

@@ -24,7 +24,7 @@ const Jumpsuit = () => {
     
         const fetchJumpsuits = async () => {
             try {
-                const response = await fetch("http://localhost:4000/api/jumpsuitDesigns");
+                const response = await fetch("http://localhost:3000/api/jumpsuitDesigns");
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }

@@ -9,7 +9,7 @@ const OrdersTable = () => {
 
   // Fetch orders from backend
   useEffect(() => {
-    fetch("http://localhost:3000/place-order")
+    fetch("http://localhost:3000/api/orders/place-order")
       .then((res) => res.json())
       .then((data) => {
         const formattedData = data.map((order) => ({

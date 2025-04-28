@@ -27,7 +27,7 @@ const AdminDashboard = () => {
 
     const fetchOrderStats = async () => {
         try {
-            const response = await fetch("http://localhost:3000/order-stats");
+            const response = await fetch("http://localhost:3000/api/orders/order-stats");
             const data = await response.json();
             setStats(data);
         } catch (error) {
@@ -37,7 +37,7 @@ const AdminDashboard = () => {
 
     const fetchWeeklyOrders = async () => {
         try {
-            const response = await fetch("http://localhost:3000/weekly-orders");
+            const response = await fetch("http://localhost:3000/api/orders/weekly-orders");
             const data = await response.json();
             setWeeklyOrders(data);
         } catch (error) {
