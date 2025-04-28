@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const userDetails = require("../models/authentication/loginSchema.js");
 
 const router = express.Router();
-const JWT_SECRET = "123456789";
+const JWT_SECRET = process.env.JWT_SECRET;
 
 
 // ✅ Google Login Route

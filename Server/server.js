@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-
+require('dotenv').config();
 // Routes
 const loginRoutes = require('./routes/loginRoutes');
 const orderRoutes = require('./routes/orderRoutes');
@@ -29,13 +29,6 @@ app.use('/api/login', loginRoutes);
 app.use('/api/orders', orderRoutes);
 app.use("/api", categoryRoutes);
 
-// MongoDB Connection
-mongoose.connect('your-mongodb-uri-here', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-})
-.then(() => console.log('MongoDB connected'))
-.catch((err) => console.error('MongoDB connection error:', err));
 
 // Start Server
 app.listen(PORT, () => {

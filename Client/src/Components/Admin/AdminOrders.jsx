@@ -25,7 +25,7 @@ const OrdersTable = () => {
   // Handle order status change
   const handleStatusChange = async (id, newStatus) => {
     try {
-      const response = await fetch(`http://localhost:3000/place-order/${id}`, {
+      const response = await fetch(`http://localhost:3000/api/orders/place-order/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: newStatus }),
