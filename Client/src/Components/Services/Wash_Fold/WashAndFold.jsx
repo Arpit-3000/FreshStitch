@@ -14,26 +14,29 @@ const WashAndFold = () => {
         deliveryCharge: 10,
         total: 10
     });
-    const[selectedService,setselectedService]=useState("Wash-And-Fold");
+    const [selectedService, setselectedService] = useState("Wash-And-Fold");
 
 
-   
-      
+
+
     const [categories, setCategories] = useState([]);
-    const [loading,setLoading]=useState(true)
+    const [loading, setLoading] = useState(true)
     const navigate = useNavigate();
     useEffect(() => {
         window.scrollTo(0, 0); // Scroll to top when this page loads
-      
+
         // localStorage.removeItem("bag");
-       
+
         const savedBag = localStorage.getItem("bag");
         if (savedBag) {
             setBag(JSON.parse(savedBag)); // Load the bag data from localStorage
         }
         const fetchCategories = async () => {
             try {
+                console.log(`Fetching from: ${import.meta.env.VITE_API_URL}/api/laundryCategories`);
                 const response = await fetch(`${import.meta.env.VITE_API_URL}/api/laundryCategories`);
+
+
                 const data = await response.json();
                 setCategories(data);
                 setLoading(false);
@@ -78,11 +81,11 @@ const WashAndFold = () => {
                 autoClose: 2000,
                 hideProgressBar: true,
             });
-           
+
             setTimeout(() => {
                 navigate("/LoginPage");
             }, 1000);
-             
+
         }
     };
 
@@ -216,44 +219,44 @@ const WashAndFold = () => {
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         {/* Categories */}
-                        
+
                         {loading ? (
-                        <Loader/>
+                            <Loader />
                         ) : categories.length === 0 ? (
-                          <p className="text-center text-lg text-gray-500">No Categories Found</p>
+                            <p className="text-center text-lg text-gray-500">No Categories Found</p>
                         ) : (
                             <div>
-                            {categories.map((category, index) => (
-                                <details
-                                    key={index}
-                                    className="mb-4 border border-gray-300 rounded-lg p-4 bg-white"
-                                >
-                                    <summary className="flex  justify-between cursor-pointer">
-                                        <span className="flex items-center space-x-2">
-                                            <span className="text-2xl">{category.icon}</span>
-                                            <span className="text-lg font-medium">{category.name}</span>
-                                        </span>
-                                        <span>▼</span>
-                                    </summary>
-                                    {category.items.length > 0 ? (
-                                        <div className="mt-2 text-gray-600">
-                                            {category.items.map((item, itemIndex) => (
-                                                <div
-                                                    key={itemIndex}
-                                                    className="flex justify-between items-center px-6 py-2 border-b"
-                                                >
-                                                    <span className="flex-1">{item.name}</span>
-                                                    <span className="mr-5 text-right font-medium">{item.price}/-</span>
-                                                    {renderAddButton(item)}
-                                                </div>
-                                            ))}
-                                        </div>
-                                    ) : (
-                                        <p className="text-gray-500 mt-2">No items available.</p>
-                                    )}
-                                </details>
-                            ))}
-                        </div>
+                                {categories.map((category, index) => (
+                                    <details
+                                        key={index}
+                                        className="mb-4 border border-gray-300 rounded-lg p-4 bg-white"
+                                    >
+                                        <summary className="flex  justify-between cursor-pointer">
+                                            <span className="flex items-center space-x-2">
+                                                <span className="text-2xl">{category.icon}</span>
+                                                <span className="text-lg font-medium">{category.name}</span>
+                                            </span>
+                                            <span>▼</span>
+                                        </summary>
+                                        {category.items.length > 0 ? (
+                                            <div className="mt-2 text-gray-600">
+                                                {category.items.map((item, itemIndex) => (
+                                                    <div
+                                                        key={itemIndex}
+                                                        className="flex justify-between items-center px-6 py-2 border-b"
+                                                    >
+                                                        <span className="flex-1">{item.name}</span>
+                                                        <span className="mr-5 text-right font-medium">{item.price}/-</span>
+                                                        {renderAddButton(item)}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <p className="text-gray-500 mt-2">No items available.</p>
+                                        )}
+                                    </details>
+                                ))}
+                            </div>
                         )}
 
                         {/* Bag Section */}
