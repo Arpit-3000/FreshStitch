@@ -6,7 +6,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import Navbar from './Components/NavBar/NavBar.jsx';
-import Chatbot from './Components/Chatbot/Chatbot.jsx';
+
 import Home from './Components/Home/Home.jsx';
 import Services from './Components/Services/Services.jsx';
 import WashAndFoldDetails from './Components/Services/Wash_Fold/WashAndFold.jsx';
