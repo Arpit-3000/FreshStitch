@@ -19,7 +19,6 @@ const Products = () => {
   const [selectedService, setSelectedService] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
 
-  // Open Popup when "Men's Wear" is clicked
   const handleButtonClick = (service, category) => {
 
       setSelectedService(service);

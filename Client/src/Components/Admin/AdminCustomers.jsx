@@ -7,7 +7,7 @@ const CustomersTable = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/orders/place-order")
+     fetch(`${import.meta.env.VITE_API_URL}/api/orders/place-order`)
       .then((res) => res.json())
       .then((data) => {
         setCustomers(data);
@@ -20,16 +20,16 @@ const CustomersTable = () => {
   }, []);
 
   const sendEmail = (email) => {
-    const subject = "Exclusive Offer: Thank You for Choosing [Your Company]";
+    const subject = "Exclusive Offer: Thank You for Choosing Fresh Stitch";
     const body = `Dear Valued Customer,
 
-We appreciate your trust in [Your Company]. We strive to provide the best service for your laundry and tailoring needs.
+We appreciate your trust in Fresh Sticth. We strive to provide the best service for your laundry and tailoring needs.
 
 If you have any feedback or special requests, feel free to reach out.
 
 Best Regards,  
-[Your Company Name]  
-[Your Contact Info]`;
+Fresh Stitch  
+FreshStitch@gmail.com`;
 
     // Gmail compose URL with prefilled details
     const gmailComposeUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${email}&su=${encodeURIComponent(

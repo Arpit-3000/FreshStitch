@@ -10,7 +10,7 @@ const WomensWearPopup = ({ onClose }) => {
 
     // Fetch Women's Wear products from API
     useEffect(() => {
-        fetch("http://localhost:3000/api/womensWear")
+         fetch(`${import.meta.env.VITE_API_URL}/api/womensWear`)
             .then((res) => res.json())
             .then((data) => setProducts(data))
             .catch((err) => console.error("Error fetching data:", err));
@@ -26,7 +26,7 @@ const WomensWearPopup = ({ onClose }) => {
         const newProduct = { name: productName, price: Number(productPrice) };
 
         try {
-            const response = await fetch("http://localhost:3000/api/womensWear", {
+            const response = await  fetch(`${import.meta.env.VITE_API_URL}/api/womensWear`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(newProduct),
@@ -46,7 +46,7 @@ const WomensWearPopup = ({ onClose }) => {
     // Delete product
     const handleDeleteProduct = async (id) => {
         try {
-            const response = await fetch(`http://localhost:3000/api/womensWear/${id}`, {
+            const response = await  fetch(`${import.meta.env.VITE_API_URL}/api/womensWear/${id}`, {
                 method: "DELETE",
             });
 
@@ -75,7 +75,7 @@ const WomensWearPopup = ({ onClose }) => {
         const updatedProduct = { name: productName, price: Number(productPrice) };
 
         try {
-            const response = await fetch(`http://localhost:3000/api/womensWear/${editingProduct}`, {
+            const response = await  fetch(`${import.meta.env.VITE_API_URL}/api/womensWear/${editingProduct}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(updatedProduct),

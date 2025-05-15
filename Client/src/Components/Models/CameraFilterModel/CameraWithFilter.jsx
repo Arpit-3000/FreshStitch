@@ -78,25 +78,23 @@ const CameraWithARShirt = ({ filterImage, onClose }) => {
       const midX = (x1 + x2) / 2;
       const midY = (y1 + y2) / 2;
       
-      const shoulderWidth = Math.abs(x2 - x1); // Only x-axis distance
+      const shoulderWidth = Math.abs(x2 - x1); 
       const hipY = ((leftHip.y + rightHip.y) / 2) * 480;
       
-      const height = hipY - midY + 40; // torso height + buffer
+      const height = hipY - midY + 40; 
       
-      const shirtWidth = shoulderWidth * 1.8; // small 10% buffer
+      const shirtWidth = shoulderWidth * 1.8; 
       const shirtHeight = height * 1.2; 
       
-      // Smoothing
+      
       lastState.current.x = lerp(lastState.current.x, midX, 0.3);
       lastState.current.y = lerp(lastState.current.y, midY, 0.3);
       lastState.current.width = lerp(lastState.current.width, shirtWidth, 0.3);
       lastState.current.height = lerp(lastState.current.height, shirtHeight, 0.3);
 
-      // Adjust image to move upwards (decrease y position to lift it)
-      const verticalOffset = -80; // Move the shirt image upwards by 30 pixels
+      const verticalOffset = -80;
       lastState.current.y += verticalOffset;
 
-      // Draw image
       canvasCtx.globalAlpha = 0.95;
       canvasCtx.drawImage(
         shirtImgRef.current,

@@ -55,7 +55,7 @@ const OrderHistory = () => {
         DeliveryCharge: Number(DeliveryCharge) || 0,
         grandtotal: Number(grandtotal) || 0,
       };
-      const response = await fetch('http://localhost:3000/api/orders/place-order', {
+      const response = await  fetch(`${import.meta.env.VITE_API_URL}/api/orders/place-order`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

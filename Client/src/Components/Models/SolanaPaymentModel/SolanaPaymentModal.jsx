@@ -91,11 +91,6 @@ const SolanaPaymentModal = ({ isOpen, onClose, amountSOL, receiverWallet }) => {
           <>
             <div className="mb-4 space-y-2">
               <p className="text-sm text-gray-700">
-                <strong>Sender's Wallet Address:</strong>
-                <br />
-                <span className="text-xs break-all text-gray-500">{walletAddress}</span>
-              </p>
-              <p className="text-sm text-gray-700">
                 <strong>Receiver's Wallet Address:</strong>
                 <br />
                 <span className="text-xs break-all text-gray-500">{receiverWallet}</span>

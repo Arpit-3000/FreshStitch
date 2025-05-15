@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import EmptyBag from "./EmptyBag.png";
+import EmptyBag from "../../EmptyBag.png";
 import salwarsuitbg from './salwarsuitbg.png';
-import CameraWithARShirt from "./CameraWithFilter";
+import CameraWithARShirt from "../../../Models/CameraFilterModel/CameraWithFilter.jsx";
 import anarkali_salwarsuit from "./anarkali_lehenga_filter.png";
 
 const SalwarSuit = () => {
@@ -30,7 +30,7 @@ const SalwarSuit = () => {
         if (savedBag) {
             setBag(JSON.parse(savedBag));
         }
-        fetch("http://localhost:3000/api/SalwarSuitDesigns")
+        fetch(`${import.meta.env.VITE_API_URL}/api/SalwarSuitDesigns`)
             .then(response => response.json())
             .then(data => setlehengaDesigns(data))
             .catch(error => console.error("Error fetching lehenga designs:", error));

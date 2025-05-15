@@ -9,7 +9,7 @@ const OrdersTable = () => {
 
   // Fetch orders from backend
   useEffect(() => {
-    fetch("http://localhost:3000/api/orders/place-order")
+     fetch(`${import.meta.env.VITE_API_URL}/api/orders/place-order`)
       .then((res) => res.json())
       .then((data) => {
         const formattedData = data.map((order) => ({
@@ -25,7 +25,7 @@ const OrdersTable = () => {
   // Handle order status change
   const handleStatusChange = async (id, newStatus) => {
     try {
-      const response = await fetch(`http://localhost:3000/api/orders/place-order/${id}`, {
+      const response = await  fetch(`${import.meta.env.VITE_API_URL}/api/orders/place-order/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: newStatus }),

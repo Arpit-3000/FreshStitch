@@ -3,15 +3,12 @@ import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { useEffect } from 'react';
 import './Services.css';
 import { motion } from 'framer-motion';
-import wash_iron from './wash_iron.png';
-import wash_fold from './wash_fold.png';
-import iron_fold from './iron_fold.png';
-import dry_cleaning from './dry_cleaning.png';
-import emergency from './emergency.png';
-import alteration from './alteration.png';
-import sewing from './sewing.png';
-import stitching from './stitching.png';
-import fitting from './fitting.png';
+import wash_iron from './Wash_Iron/wash_iron.png';
+import wash_fold from './Wash_Fold/wash_fold.png';
+import iron_fold from './Iron_Fold/iron_fold.png';
+import dry_cleaning from './Dry_Cleaning/dry_cleaning.png';
+import stitching from './Stitching/stitching.png';
+
 import combo from './combo.png';
 import backgroundImage from './back.jpg';
 
@@ -42,12 +39,6 @@ const laundryServices = [
     route: "/dry-cleaning"
   },
   {
-    title: "Emergency Service",
-    description: "Fast-track service for urgent needs.",
-    imgSrc: emergency,
-    route: "/emergency-service"
-  },
-  {
     title: "Combo (All-Inclusive)",
     description: "Includes all services at a special price.",
     imgSrc: combo,
@@ -56,16 +47,11 @@ const laundryServices = [
 ];
 
 const tailoringServices = [
-  {
-    title: "Alteration",
-    description: "Expert sewing services for garment repairs.",
-    imgSrc: sewing,
-    route: "/sewing"
-  },
+ 
   {
     title: "Stitching",
     description: "Tailoring services for altering your garments.",
-    imgSrc: alteration,
+    imgSrc: stitching,
     route: "/stitching"
   },
 

@@ -10,7 +10,7 @@ const HouseholdPopup = ({ onClose }) => {
 
     // Fetch household products from API
     useEffect(() => {
-        fetch("http://localhost:3000/api/household")
+         fetch(`${import.meta.env.VITE_API_URL}/api/household`)
             .then((res) => res.json())
             .then((data) => setProducts(data))
             .catch((err) => console.error("Error fetching data:", err));
@@ -25,7 +25,7 @@ const HouseholdPopup = ({ onClose }) => {
 
         const newProduct = { name: productName, price: Number(productPrice) };
 
-        const response = await fetch("http://localhost:3000/api/household", {
+        const response = await  fetch(`${import.meta.env.VITE_API_URL}/api/household`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(newProduct),
@@ -33,7 +33,7 @@ const HouseholdPopup = ({ onClose }) => {
 
         if (response.ok) {
             const updatedProducts = await response.json();
-            setProducts(updatedProducts); // Update state with new product list
+            setProducts(updatedProducts); 
             setProductName("");
             setProductPrice("");
         }
@@ -42,7 +42,7 @@ const HouseholdPopup = ({ onClose }) => {
     // Delete product
     const handleDeleteProduct = async (id) => {
         try {
-            const response = await fetch(`http://localhost:3000/api/household/${id}`, {
+            const response = await  fetch(`${import.meta.env.VITE_API_URL}/api/household/${id}`, {
                 method: "DELETE",
             });
 
@@ -56,14 +56,14 @@ const HouseholdPopup = ({ onClose }) => {
         }
     };
 
-    // Start editing a product
+    
     const startEditing = (product) => {
         setEditingProduct(product._id);
         setProductName(product.name);
         setProductPrice(product.price);
     };
 
-    // Save edited product
+    
     const handleEditProduct = async () => {
         if (!productName || !productPrice || !editingProduct) {
             alert("Please enter product name and price!");
@@ -73,7 +73,7 @@ const HouseholdPopup = ({ onClose }) => {
         const updatedProduct = { name: productName, price: Number(productPrice) };
 
         try {
-            const response = await fetch(`http://localhost:3000/api/household/${editingProduct}`, {
+            const response = await  fetch(`${import.meta.env.VITE_API_URL}/api/household/${editingProduct}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(updatedProduct),
@@ -83,14 +83,14 @@ const HouseholdPopup = ({ onClose }) => {
                 throw new Error("Failed to update product");
             }
 
-            // Update the UI with edited product
+            
             setProducts((prevProducts) =>
                 prevProducts.map((item) =>
                     item._id === editingProduct ? { ...item, ...updatedProduct } : item
                 )
             );
 
-            setEditingProduct(null); // Exit edit mode
+            setEditingProduct(null); 
             setProductName("");
             setProductPrice("");
         } catch (error) {

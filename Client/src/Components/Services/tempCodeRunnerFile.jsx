@@ -1,3 +1,0 @@
-return () => {
-            localStorage.removeItem("bag");
-        };

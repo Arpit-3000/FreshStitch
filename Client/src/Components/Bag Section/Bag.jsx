@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import backgroundImage from './back.jpg';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
-import SolanaPaymentModal from "../SolanaPaymentModal";
+import SolanaPaymentModal from "../Models/SolanaPaymentModel/SolanaPaymentModal";
 
 
 const BagSection = () => {
@@ -276,7 +276,7 @@ useEffect(() => {
           setShowSolanaModal(false);
           setPaymentMethod("Solana Payment");
         }}
-        amountSOL={0.00001}
+        amountSOL={solAmount}
         receiverWallet="94QZP1C5xBgPpDfB3foZujiLSQpTuXpYFev9u2pMN7i9"
       />
 

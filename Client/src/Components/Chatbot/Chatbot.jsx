@@ -4,11 +4,11 @@ import { FaPaperPlane, FaRobot, FaUser, FaComments } from "react-icons/fa";
 import Draggable from "react-draggable";
 
 const Chatbot = () => {
-  const [messages, setMessages] = useState([{ text: "Hello! How can I help?", sender: "bot" }]);
+  const [messages, setMessages] = useState([{ text: "Hello Fresh Stitch user! How can I help?", sender: "bot" }]);
   const [input, setInput] = useState("");
   const [isOpen, setIsOpen] = useState(false);
 
-  const API_KEY = "AIzaSyBYkd3CyN-ICuaM5yvqbO2lZE3RiS1sLcw"; 
+  const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
   const sendMessage = async (event) => {
     event.preventDefault();
@@ -27,12 +27,12 @@ const Chatbot = () => {
       let botReply =
         response.data.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, I didn’t understand that.";
 
-      // Format response as a list if applicable
+     
       if (botReply.includes("\n")) {
         botReply = botReply
           .split("\n")
           .map((line) => line.trim())
-          .filter((line) => line) // Remove empty lines
+          .filter((line) => line) 
           .map((line, index) => <li key={index} className="ml-4 list-disc">{line}</li>);
       }
 

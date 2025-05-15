@@ -94,7 +94,7 @@ router.put("/place-order/:id", async (req, res) => {
         res.status(500).json({ error: "Failed to update order status" });
     }
 });
-
+// DRd6D8EThb0KXchi
 // Order Statistics
 router.get("/order-stats", async (req, res) => {
     try {

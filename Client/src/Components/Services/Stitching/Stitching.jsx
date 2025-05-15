@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import EmptyBag from "./EmptyBag.png";
+import EmptyBag from "../EmptyBag.png";
 import { toast } from 'react-toastify';
 import { Link, useNavigate } from "react-router-dom";
 import 'react-toastify/dist/ReactToastify.css';
-import Loader from "../Loader/Loader";
+import Loader from "../../Loader/Loader";
 
 const Stitching = () => {
     const [bag, setBag] = useState({

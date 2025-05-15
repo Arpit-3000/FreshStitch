@@ -17,7 +17,7 @@ const OrderCard = ({ order, onViewDetails }) => {
 
   return (
     <div className=" bg-gradient-to-r from-cadetblue to-cadetdark text-white p-6 rounded-xl shadow-lg w-full max-w-2xl mx-auto mb-6 relative">
-      {/* FIX: Allow clicks to pass through */}
+      
       <div className="absolute  inset-0 rounded-xl pointer-events-none"></div>
 
       <div className="relative flex justify-between items-center">
@@ -198,7 +198,7 @@ const MyOrders = () => {
       return;
     }
 
-    fetch("http://localhost:3000/api/orders/place-order")
+    fetch(`${import.meta.env.VITE_API_URL}/api/orders/place-order`)
       .then((response) => {
         if (!response.ok) throw new Error("Failed to fetch orders");
         return response.json();

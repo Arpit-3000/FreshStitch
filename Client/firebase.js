@@ -3,14 +3,15 @@ import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/
 import { getAnalytics } from "firebase/analytics";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCrMwL1f6MZt03Ka4l4Y84jp3G9H9hwLec",
-  authDomain: "freshstitch-4cbf8.firebaseapp.com",
-  projectId: "freshstitch-4cbf8",
-  storageBucket: "freshstitch-4cbf8.appspot.com", 
-  messagingSenderId: "986015696343",
-  appId: "1:986015696343:web:a6998adcd5cac85553b792",
-  measurementId: "G-7YSKP31KML"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
+
 
 
 const app = initializeApp(firebaseConfig);

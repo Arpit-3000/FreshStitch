@@ -1,38 +1,40 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import EmptyBag from "./EmptyBag.png";
+import EmptyBag from "../EmptyBag.png";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Loader from "../Loader/Loader";
+import Loader from "../../Loader/Loader";
 
-
-
-
-const IronAndFoldDetails = () => {
+const DryCleaning = () => {
     const [bag, setBag] = useState({
         items: [],
-        selectedService: "Wash-And-Iron",
+        // selectedService:"Wash-And-Fold",
         subtotal: 0,
         deliveryCharge: 10,
         total: 10
     });
-    const[selectedService,setselectedService]=useState("Iron & Fold");
+    const[selectedService,setselectedService]=useState("Dry Cleaning");
 
 
-  
+   
+      
     const [categories, setCategories] = useState([]);
     const [loading,setLoading]=useState(true)
     const navigate = useNavigate();
     useEffect(() => {
         window.scrollTo(0, 0); // Scroll to top when this page loads
+      
+        // localStorage.removeItem("bag");
+       
         const savedBag = localStorage.getItem("bag");
         if (savedBag) {
             setBag(JSON.parse(savedBag)); // Load the bag data from localStorage
         }
         const fetchCategories = async () => {
             try {
-                const response = await fetch("http://localhost:3000/api/laundryCategories");
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/laundryCategories`);
+
                 const data = await response.json();
                 setCategories(data);
                 setLoading(false);
@@ -54,8 +56,7 @@ const IronAndFoldDetails = () => {
     };
 
     useEffect(() => {
-        localStorage.setItem("bag", JSON.stringify(bag));
-        // Save to localStorage whenever bag updates
+        localStorage.setItem("bag", JSON.stringify(bag)); // Save to localStorage whenever bag updates
     }, [bag]);
     console.log(bag);
 
@@ -66,28 +67,29 @@ const IronAndFoldDetails = () => {
             navigate("/cart", {
                 state: {
                     bag: bag.items,
-                    selectedService:bag.selectedService,
+                    selectedService: bag.selectedService,
                     subtotal: bag.subtotal,
                     deliveryCharge: bag.deliveryCharge,
                     total: bag.total,
                 }
             });
         } else {
-           toast.error('Please log in to proceed!', {
-                          position: 'bottom-center',
-                          autoClose: 2000,
-                          hideProgressBar: true,
-                      });
-                     
-                      setTimeout(() => {
-                          navigate("/LoginPage");
-                      }, 1000);
+            toast.error('Please log in to proceed!', {
+                position: 'bottom-center',
+                autoClose: 2000,
+                hideProgressBar: true,
+            });
+           
+            setTimeout(() => {
+                navigate("/LoginPage");
+            }, 1000);
+             
         }
     };
 
 
     const faqs = [
-        "What is included in the iron & fold service?",
+        "What is included in the wash & iron service?",
         "How much time does it take to deliver?",
         "Are there any additional charges for bulky items?",
     ];
@@ -143,7 +145,6 @@ const IronAndFoldDetails = () => {
         }));
     };
 
-
     const renderAddButton = (item) => {
         const existingItem = bag.items.find((bagItem) => bagItem.name === item.name);
 
@@ -185,7 +186,7 @@ const IronAndFoldDetails = () => {
                 <div className="container mx-auto p-4">
                     <div className=" relative flex  w-5/5 ">
                         <h1 className="text-4xl font-bold font-serif  text-cadetblue mb-10 mt-6 ">
-                            Iron & Fold Service
+                            Dry Cleaning Service
                         </h1>
                         <button className="mt-6  px-4 py-2 absolute  right-0 w-48 h-2/4 bg-red-500 text-white rounded hover:bg-red-800 transition-colors" onClick={toggleDropdown}>
                             Select Service <span>▼</span>
@@ -194,9 +195,9 @@ const IronAndFoldDetails = () => {
                             <div className="absolute right-0 top-20 mt-2 w-48 bg-white shadow-lg rounded-md">
                                 <ul className="py-2">
                                     {[
-                                        <Link to="/wash-and-fold">Wash & Fold</Link>,
                                         <Link to="/wash-and-iron">Wash & Iron</Link>,
-                                        <Link to="/dry-cleaning">Dry Cleaning</Link>,
+                                        <Link to="/Iron-and-Fold">Iron & Fold</Link>,
+                                        <Link to="/wash-and-Fold">Wash & Fold</Link>,
                                         <Link to="/alteration">Alteration</Link>,
                                         <Link to="/stitching">Stiching</Link>
                                     ].map((service, index) => (
@@ -215,12 +216,13 @@ const IronAndFoldDetails = () => {
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         {/* Categories */}
+                        
                         {loading ? (
                         <Loader/>
                         ) : categories.length === 0 ? (
                           <p className="text-center text-lg text-gray-500">No Categories Found</p>
                         ) : (
-                        <div>
+                            <div>
                             {categories.map((category, index) => (
                                 <details
                                     key={index}
@@ -403,4 +405,4 @@ const IronAndFoldDetails = () => {
     );
 };
 
-export default IronAndFoldDetails;
+export default DryCleaning;

@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import EmptyBag from "./EmptyBag.png";
+import EmptyBag from "../EmptyBag.png";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Loader from "../Loader/Loader";
+import Loader from "../../Loader/Loader";
 
 
 
@@ -32,7 +32,7 @@ const WashAndIronDetails = () => {
         }
         const fetchCategories = async () => {
             try {
-                const response = await fetch("http://localhost:3000/api/laundryCategories");
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/laundryCategories`);
                 const data = await response.json();
                 setCategories(data);
                 setLoading(false);

@@ -29,7 +29,7 @@ function LoginForm() {
         }
 
         try {
-            const response = await fetch("http://localhost:3000/api/login/auth/google", {
+            const response = await  fetch(`${import.meta.env.VITE_API_URL}/api/login/auth/google`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username, password }),
@@ -74,7 +74,7 @@ function LoginForm() {
             const result = await signInWithPopup(auth, provider);
             const user = result.user;
     
-            const response = await fetch("http://localhost:3000/api/login/auth/google", {
+            const response = await  fetch(`${import.meta.env.VITE_API_URL}/api/login/auth/google`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({

@@ -1,16 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import EmptyBag from "./EmptyBag.png";
-import shirt_bg from './shirt_bg.png';
-import shirt_white from "./shirt_white.png";
-import denim_shirt from "./denim_shirt.png";
-import checked_flannel_shirt from "./checked_flannel_shirt.png";
-import kurta_shirt from "./Kurta_Shirt.png";
-import CameraWithARShirt from "./CameraWithFilter"
- // Added another shirt image
+import EmptyBag from "../../EmptyBag.png";
+import jumpsuitBg from './jumpsuit.png';
 
-const Shirt = () => {
-    const [lehengaDesigns, setlehengaDesigns] = useState([]);
+const Jumpsuit = () => {
+    const [jumpsuitDesigns, setjumpsuitDesigns] = useState([]);
     const [bag, setBag] = useState({
         items: [],
         subtotal: 0,
@@ -18,33 +12,34 @@ const Shirt = () => {
         total: 10
     });
 
-    const shirts = [
-        { name: "White Shirt", image: shirt_white },
-        { name: "Casual Denim Shirt", image: denim_shirt }, 
-        { name: "Checked Flannel Shirt", image: checked_flannel_shirt },
-        { name: "Kurta Shirt", image: kurta_shirt},
-    ];
-    
-
-    const [showCamera, setShowCamera] = useState(false);
-const [selectedFilterImage, setSelectedFilterImage] = useState(null);
-
     const navigate = useNavigate();
 
     useEffect(() => {
         window.scrollTo(0, 0);
-        const savedBag = localStorage.getItem("bag_lehenga");
+        
+        const savedBag = localStorage.getItem("bag_jumpsuit");
         if (savedBag) {
             setBag(JSON.parse(savedBag));
         }
-        fetch("http://localhost:3000/api/ShirtDesigns")
-            .then(response => response.json())
-            .then(data => setlehengaDesigns(data))
-            .catch(error => console.error("Error fetching lehenga designs:", error));
+    
+        const fetchJumpsuits = async () => {
+            try {
+                const response = await  fetch(`${import.meta.env.VITE_API_URL}/api/jumpsuitDesigns`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const data = await response.json();
+                setjumpsuitDesigns(data);
+            } catch (error) {
+                console.error("Error fetching jumpsuit designs:", error);
+            }
+        };
+    
+        fetchJumpsuits();
     }, []);
 
     useEffect(() => {
-        localStorage.setItem("bag_lehenga", JSON.stringify(bag));
+        localStorage.setItem("bag_jumpsuit", JSON.stringify(bag));
     }, [bag]);
 
     const handleProceedToCheckout = () => {
@@ -97,14 +92,30 @@ const [selectedFilterImage, setSelectedFilterImage] = useState(null);
         });
     };
 
-    const handleCameraClick = (shirtImage) => {
-        setSelectedFilterImage(shirtImage); // Set the clicked shirt image
-        setShowCamera(true); // Open camera
+    const handleCameraClick = () => {
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then((stream) => {
+                const video = document.createElement("video");
+                video.srcObject = stream;
+                video.play();
+
+                const canvas = document.createElement("canvas");
+                const context = canvas.getContext("2d");
+
+                setTimeout(() => {
+                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    const imageUrl = canvas.toDataURL("image/png");
+                    console.log("Captured Image:", imageUrl); // Handle image upload or preview
+                    stream.getTracks().forEach(track => track.stop());
+                }, 2000);
+            })
+            .catch((error) => console.error("Error accessing camera:", error));
     };
 
+   
     const renderAddButton = (item) => {
         const existingItem = bag.items.find((bagItem) => bagItem.name === item.name);
-    
+
         return (
             <div className="flex items-center space-x-2 justify-center">
                 {existingItem ? (
@@ -114,57 +125,55 @@ const [selectedFilterImage, setSelectedFilterImage] = useState(null);
                         <button onClick={() => addItem(item)} className="px-4 py-1 bg-cadetblue text-white rounded-r">+</button>
                     </div>
                 ) : (
-                    <button onClick={() => addItem(item)} className="px-4 py-2 bg-cadetblue text-white rounded hover:bg-cadetdark transition-colors">
+                    <button onClick={() => addItem(item)} className=" px-4 py-2 bg-cadetblue text-white rounded hover:bg-cadetdark transition-colors">
                         Add to Bag
                     </button>
                 )}
                 <button
-                    onClick={() => handleCameraClick(getImageForShirt(item.name))} // <- Pass correct shirt image
+                    onClick={handleCameraClick}
                     className="ml-4 px-4 py-2 bg-cadetblue text-white rounded hover:bg-cadetdark transition-colors"
                     title="Capture Image"
                 >
-                    Camera
+                    📷
                 </button>
             </div>
         );
-    };
-    const getImageForShirt = (name) => {
-        const shirt = shirts.find(s => s.name === name);
-        return shirt ? shirt.image : shirt_white; // fallback image
     };
 
     return (
         <>
             <div className="bg-creamLight min-h-screen">
                 <div
-                    className="relative bg-gradient-to-br from-pink-700 to-pink-900 w-full h-96"
+                    className="relative bg-gradient-to-br from-pink-600 to-pink-900 w-full h-96"
                     style={{
                         clipPath:
                             "polygon(0% 0%, 100% 0%, 100% 90%, 95% 100%, 90% 90%, 85% 100%, 80% 90%, 75% 100%, 70% 90%, 65% 100%, 60% 90%, 55% 100%, 50% 90%, 45% 100%, 40% 90%, 35% 100%, 30% 90%, 25% 100%, 20% 90%, 15% 100%, 10% 90%, 5% 100%, 0% 90%)",
                     }}
                 >
-                    <img src={shirt_bg} className="h-full object-cover" alt="Shirt Background" />
-                    <h1 className="absolute inset-0 flex top-20 left-2/4 text-5xl font-bold text-amber-400 ">Shirt Designs</h1>
-                    <h6 className="absolute inset-0 flex top-40 left-2/4 text-2xl font-bold text-amber-400 ">Get your Shirts, where every stitch speaks elegance.</h6>
+                    <img src={jumpsuitBg} className="h-full object-cover" alt="Lehenga Background" />
+                    <h1 className="absolute inset-0 flex top-20 left-2/4 text-5xl font-bold text-amber-400 ">Jumpsuit Designs</h1>
+                    <h6 className="absolute inset-0 flex top-40 left-2/4 text-2xl font-bold text-amber-400 ">Get your perfect jumpsuit, designed for effortless style.</h6>
                 </div>
-                <div className="container mx-20 mr-2 py-4 mt-10">
-                    <div className="flex gap-6">
+                <div className="container  mx-20 mr-2 py-4 mt-10">
+
+                    <div className="flex gap-6 ">
                         <div className="space-y-6">
-                            {lehengaDesigns.map((lehenga, index) => (
+                            {jumpsuitDesigns.map((lehenga, index) => (
                                 <div key={index} className="flex items-center border border-gray-300 rounded-lg p-4 bg-white shadow-md">
-                                    <img src={getImageForShirt(lehenga.name)} alt={lehenga.name} className="w-52 h-52 object-cover rounded-md mr-6" />
+                                    <img src={lehenga.image} alt={lehenga.name} className="w-52 h-52 object-cover rounded-md mr-6" />
                                     <div className="flex-1 text-left">
                                         <h2 className="text-xl font-semibold mb-2">{lehenga.name}</h2>
                                         <p className="text-gray-600 text-sm">{lehenga.description}</p>
                                         <p className="text-lg font-semibold mt-2">₹{lehenga.price}</p>
                                         <div className="flex items-center mt-2">
                                             {renderAddButton(lehenga)}
+
                                         </div>
                                     </div>
                                 </div>
                             ))}
                         </div>
-                        <div className="bg-white shadow rounded-lg p-4 w-2/6">
+                        <div className="bg-white shadow rounded-lg p-4 w-3/6 ">
                             <h2 className="text-xl font-bold text-cadetdark">Your Bag</h2>
                             {bag.items.length > 0 ? (
                                 <>
@@ -207,7 +216,7 @@ const [selectedFilterImage, setSelectedFilterImage] = useState(null);
                                 </div>
                             )}
                             <button
-                                onClick={() => navigate("/stitching")}
+                                onClick={() => navigate("/stitching") }
                                 className="px-4 py-2 mt-4 w-60 bg-red-600 text-white rounded hover:bg-red-800 transition-colors"
                             >
                                 Stitching section
@@ -215,23 +224,7 @@ const [selectedFilterImage, setSelectedFilterImage] = useState(null);
                         </div>
                     </div>
                 </div>
-
-                {showCamera && (
-    <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-80 flex items-center justify-center z-50">
-        <CameraWithARShirt
-            filterImage={selectedFilterImage}
-            onClose={() => setShowCamera(false)}
-        />
-        <button
-            onClick={() => setShowCamera(false)}
-            className="absolute top-5 right-5 bg-red-600 text-white px-4 py-2 rounded"
-        >
-            Close
-        </button>
-    </div>
-)}
-
-                {/* Footer */}
+                {/* Contact Section */}
                 <footer id="contact" className="bg-gradient-to-br from-cadetblue to-cadetdark text-white p-8 h-72">
                     <div className="flex justify-between items-center">
                         <div>
@@ -255,4 +248,4 @@ const [selectedFilterImage, setSelectedFilterImage] = useState(null);
     );
 };
 
-export default Shirt;
+export default Jumpsuit;

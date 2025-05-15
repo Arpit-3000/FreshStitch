@@ -10,7 +10,7 @@ const MenWearPopup = ({ onClose }) => {
 
     // Fetch Men's Wear products from API
     useEffect(() => {
-        fetch("http://localhost:3000/api/mensWear")
+         fetch(`${import.meta.env.VITE_API_URL}/api/mensWear`)
             .then((res) => res.json())
             .then((data) => setProducts(data))
             .catch((err) => console.error("Error fetching data:", err));
@@ -28,7 +28,7 @@ const MenWearPopup = ({ onClose }) => {
         if (editingProduct) {
             // Edit existing product
             try {
-                const response = await fetch(`http://localhost:3000/api/mensWear/${editingProduct}`, {
+                const response = await  fetch(`${import.meta.env.VITE_API_URL}/api/mensWear/${editingProduct}`, {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(productData),
@@ -46,7 +46,7 @@ const MenWearPopup = ({ onClose }) => {
         } else {
             // Add new product
             try {
-                const response = await fetch("http://localhost:3000/api/mensWear", {
+                const response = await  fetch(`${import.meta.env.VITE_API_URL}/api/mensWear`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(productData),
@@ -67,7 +67,7 @@ const MenWearPopup = ({ onClose }) => {
     // Delete product
     const handleDeleteProduct = async (id) => {
         try {
-            const response = await fetch(`http://localhost:3000/api/mensWear/${id}`, {
+            const response = await  fetch(`${import.meta.env.VITE_API_URL}/api/mensWear/${id}`, {
                 method: "DELETE",
             });
 

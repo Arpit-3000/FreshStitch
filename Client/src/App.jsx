@@ -6,26 +6,24 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import Navbar from './Components/NavBar/NavBar.jsx';
-import Chatbot from './Components/Chatbot.jsx';
+import Chatbot from './Components/Chatbot/Chatbot.jsx';
 import Home from './Components/Home/Home.jsx';
 import Services from './Components/Services/Services.jsx';
-import WashAndFoldDetails from './Components/Services/WashAndFold.jsx';
-import WashAndIronDetails from './Components/Services/WashAndIron.jsx';
-import IronAndFoldDetails from './Components/Services/IronAndFold.jsx';
-import DryCleaning from './Components/Services/DryCleaning.jsx';
-import SewingDetails from './Components/Services/Sewing.jsx';
+import WashAndFoldDetails from './Components/Services/Wash_Fold/WashAndFold.jsx';
+import WashAndIronDetails from './Components/Services/Wash_Iron/WashAndIron.jsx';
+import IronAndFoldDetails from './Components/Services/Iron_Fold/IronAndFold.jsx';
+import DryCleaning from './Components/Services/Dry_Cleaning/DryCleaning.jsx';
 import LoginForm from './Components/LoginPage/LoginPage.jsx';
 import RegisterForm from './Components/RegisterPage/RegisterPage.jsx';
 import Contact from './Components/Contact/Contact.jsx';
 import BagSection from './Components/Bag Section/Bag.jsx';
 import AboutUs from './Components/About/About.jsx';
 import OrderHistory from './Components/Bag Section/orderhistory.jsx';
-import Lehenga from './Components/Services/Lehenga.jsx';
-import Stitching from './Components/Services/Stitching.jsx';
-import Jumpsuit from './Components/Services/Jumpsuit.jsx';
-import SalwarSuit from './Components/Services/SalwarSuit.jsx';
-
-import Profile from './Components/Profile.jsx';
+import Lehenga from './Components/Services/Stitching/Lehenga/Lehenga.jsx';
+import Stitching from './Components/Services/Stitching/Stitching.jsx';
+import Jumpsuit from './Components/Services/Stitching/Jumpsuit/Jumpsuit.jsx';
+import SalwarSuit from './Components/Services/Stitching/Salwar_Suit/SalwarSuit.jsx';
+import Shirt from './Components/Services/Stitching/Shirt_Mens/Shirt.jsx';
 import MyOrders from './Components/MyOrders/MyOrders.jsx';
 import AdminLogin from './Components/Admin/AdminLogin.jsx';
 import AdminDashboard from './Components/Admin/AdminDashboard.jsx';
@@ -33,7 +31,7 @@ import Products from './Components/Admin/Products.jsx';
 import AdminOrders from './Components/Admin/AdminOrders.jsx';
 import AdminCustomers from './Components/Admin/AdminCustomers.jsx';
 import AdminRegistration from './Components/Admin/AdminRegistration.jsx';
-import Shirt from './Components/Services/shirt.jsx';
+
 
 
 const AppRoutes = () => {
@@ -54,7 +52,7 @@ const AppRoutes = () => {
       <Routes>
         {/* Client Routes */}
         <Route path="/" element={<Home />} />
-        <Route path="/profile" element={<Profile />} />
+       
         <Route path="/contact" element={<Contact />} />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/cart" element={<BagSection />} />
@@ -67,7 +65,7 @@ const AppRoutes = () => {
         <Route path="/wash-and-iron" element={<WashAndIronDetails />} />
         <Route path="/iron-and-fold" element={<IronAndFoldDetails />} />
         <Route path="/Dry-Cleaning" element={<DryCleaning />} />
-        <Route path="/sewing" element={<SewingDetails />} />
+        
         <Route path="/stitching" element={<Stitching />} />
         <Route path="/lehenga" element={<Lehenga />} />
         <Route path="/jumpsuit" element={<Jumpsuit />} />

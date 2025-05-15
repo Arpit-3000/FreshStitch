@@ -1,17 +1,17 @@
 import React from 'react';
-import { FaCheckCircle } from 'react-icons/fa'; // Importing icons for bullet points
+import { FaCheckCircle } from 'react-icons/fa';
 import bgAbout from './bgAbout.png';
 import { useEffect } from 'react';
 
 const AboutUs = () => {
   useEffect(() => {
-          window.scrollTo(0, 0); // Scroll to top when this page loads
+          window.scrollTo(0, 0); 
         }, []);
   return (<> 
    <div
       className="min-h-screen bg-cover bg-center bg-no-repeat"
       style={{
-        backgroundImage: `url(${bgAbout})`, // Use the imported image as background
+        backgroundImage: `url(${bgAbout})`, 
       }}
     >
     <section id="about" className="bg-gray-50 py-16 px-4 bg-opacity-70">

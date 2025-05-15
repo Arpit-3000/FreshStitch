@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import EmptyBag from "./EmptyBag.png";
+import EmptyBag from "../EmptyBag.png";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Loader from "../Loader/Loader";
+import Loader from "../../Loader/Loader";
 
-const DryCleaning = () => {
+const WashAndFold = () => {
     const [bag, setBag] = useState({
         items: [],
         // selectedService:"Wash-And-Fold",
@@ -14,7 +14,7 @@ const DryCleaning = () => {
         deliveryCharge: 10,
         total: 10
     });
-    const[selectedService,setselectedService]=useState("Dry Cleaning");
+    const[selectedService,setselectedService]=useState("Wash-And-Fold");
 
 
    
@@ -33,7 +33,7 @@ const DryCleaning = () => {
         }
         const fetchCategories = async () => {
             try {
-                const response = await fetch("http://localhost:3000/api/laundryCategories");
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/laundryCategories`);
                 const data = await response.json();
                 setCategories(data);
                 setLoading(false);
@@ -185,7 +185,7 @@ const DryCleaning = () => {
                 <div className="container mx-auto p-4">
                     <div className=" relative flex  w-5/5 ">
                         <h1 className="text-4xl font-bold font-serif  text-cadetblue mb-10 mt-6 ">
-                            Dry Cleaning Service
+                            Wash & Fold Service
                         </h1>
                         <button className="mt-6  px-4 py-2 absolute  right-0 w-48 h-2/4 bg-red-500 text-white rounded hover:bg-red-800 transition-colors" onClick={toggleDropdown}>
                             Select Service <span>▼</span>
@@ -196,7 +196,8 @@ const DryCleaning = () => {
                                     {[
                                         <Link to="/wash-and-iron">Wash & Iron</Link>,
                                         <Link to="/Iron-and-Fold">Iron & Fold</Link>,
-                                        <Link to="/wash-and-Fold">Wash & Fold</Link>,
+                                        <Link to="dry-cleaning">Dry Cleaning</Link>,
+                                        <Link to="/sewing">Sewing</Link>,
                                         <Link to="/alteration">Alteration</Link>,
                                         <Link to="/stitching">Stiching</Link>
                                     ].map((service, index) => (
@@ -404,4 +405,4 @@ const DryCleaning = () => {
     );
 };
 
-export default DryCleaning;
+export default WashAndFold;
