@@ -47,7 +47,7 @@ const AppRoutes = () => {
       />
       {/* Show Navbar & Chatbot only on client routes */}
       {!isAdminRoute && <Navbar />}
-      {!isAdminRoute && <Chatbot />}
+      
 
       <Routes>
         {/* Client Routes */}
