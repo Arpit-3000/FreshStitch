@@ -31,6 +31,10 @@ app.use("/api", categoryRoutes);
 
 
 // Start Server
+app.get('/', (req, res) => {
+  res.send('✅ FreshStitch backend is live and connected to MongoDB!');
+});
+
 app.listen(PORT, () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
