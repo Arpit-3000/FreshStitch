@@ -24,7 +24,7 @@ const CameraWithARShirt = ({ filterImage, onClose }) => {
       shirtImgRef.current = shirtImg;
     };
 
-    const pose = new window.Pose.Pose({
+    const pose = new window.Pose({
 
       locateFile: (file) =>
         `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
