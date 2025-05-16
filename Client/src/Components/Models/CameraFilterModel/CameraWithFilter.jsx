@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
+import { Pose } from '@mediapipe/pose';
+import { Camera } from '@mediapipe/camera_utils';
 
-
-import { Camera } from "@mediapipe/camera_utils";
 
 const lerp = (a, b, t) => a * (1 - t) + b * t;
 
@@ -24,7 +24,7 @@ const CameraWithARShirt = ({ filterImage, onClose }) => {
       shirtImgRef.current = shirtImg;
     };
 
-    const pose = new window.Pose({
+  const pose = new Pose({
 
       locateFile: (file) =>
         `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
@@ -43,7 +43,7 @@ const CameraWithARShirt = ({ filterImage, onClose }) => {
     let camera = null;
 
     if (videoRef.current) {
-      camera = new Camera(videoRef.current, {
+       camera = new Camera(videoRef.current, {
         onFrame: async () => {
           await pose.send({ image: videoRef.current });
         },
