@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import * as mpPose from "@mediapipe/pose";
+
 
 import { Camera } from "@mediapipe/camera_utils";
 
@@ -24,7 +24,7 @@ const CameraWithARShirt = ({ filterImage, onClose }) => {
       shirtImgRef.current = shirtImg;
     };
 
-    const pose = new mpPose.Pose({
+    const pose = new window.Pose.Pose({
 
       locateFile: (file) =>
         `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
