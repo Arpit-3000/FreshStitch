@@ -33,7 +33,7 @@ const WashAndFold = () => {
         }
         const fetchCategories = async () => {
             try {
-                console.log(`Fetching from: ${import.meta.env.VITE_API_URL}/api/laundryCategories`);
+                
                 const response = await fetch(`${import.meta.env.VITE_API_URL}/api/laundryCategories`);
 
 

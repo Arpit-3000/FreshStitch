@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom'; 
 import { useEffect } from 'react';
 import './Services.css';
 import { motion } from 'framer-motion';
@@ -9,7 +9,7 @@ import iron_fold from './Iron_Fold/iron_fold.png';
 import dry_cleaning from './Dry_Cleaning/dry_cleaning.png';
 import stitching from './Stitching/stitching.png';
 
-import combo from './combo.png';
+// import combo from './combo.png';
 import backgroundImage from './back.jpg';
 
 // Separate arrays for Laundry and Tailoring services
@@ -38,12 +38,12 @@ const laundryServices = [
     imgSrc: dry_cleaning,
     route: "/dry-cleaning"
   },
-  {
-    title: "Combo (All-Inclusive)",
-    description: "Includes all services at a special price.",
-    imgSrc: combo,
-    route: "/combo"
-  },
+  // {
+  //   title: "Combo (All-Inclusive)",
+  //   description: "Includes all services at a special price.",
+  //   imgSrc: combo,
+  //   route: "/combo"
+  // },
 ];
 
 const tailoringServices = [
@@ -64,9 +64,9 @@ const Services = () => {
     if (location.hash) {
       const element = document.querySelector(location.hash);
       if (element) {
-        const navbarHeight = document.querySelector('.navbar').offsetHeight; // Get the Navbar height
-        const elementPosition = element.offsetTop; // Get the element's position from the top
-        const offsetPosition = elementPosition - navbarHeight; // Adjust for Navbar height
+        const navbarHeight = document.querySelector('.navbar').offsetHeight; 
+        const elementPosition = element.offsetTop; 
+        const offsetPosition = elementPosition - navbarHeight; 
   
         // Scroll without a smooth animation
         window.scrollTo({

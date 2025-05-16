@@ -1,6 +1,6 @@
-import React from "react";
+
 import { Carousel } from "react-responsive-carousel";
-import { useNavigate } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import file2 from './file2.jpg';
@@ -9,7 +9,6 @@ import dry_cleaning from './dry_cleaning.png';
 import washfold from './wash_fold.png';
 import ironfold from './iron_fold.png';
 import washiron from './wash_iron.png';
-import sewing from './sewing.png';
 import alteration from './alteration.png';
 import { FaCheckCircle } from 'react-icons/fa';
 import placeorder from './placeorder.png';
@@ -18,6 +17,7 @@ import deliver from './deliver.png';
 import affordprice from './affordprice.png';
 import qualitycare from './qualitycare.png';
 import fastdelivery from './fastdelivery.png';
+import stitching from './stitching.png';
 
 
 const Home = () => {
@@ -72,7 +72,7 @@ const Home = () => {
                 Fresh Stitch - Perfect place for Dhulai
               </div>
               <button className="border-black hover:bg-sky-950 font-sans rounded-sm h-10 w-24 md:h-10 md:w-28 text-white font-semibold bg-sky-800">
-                <a href="/about">View More</a>
+                 <Link to="/about">View More</Link>,
               </button>
             </div>
             <p className="legend">Fresh Stitch</p>
@@ -92,7 +92,7 @@ const Home = () => {
                 Fresh Sticth - Perfect place for Silai
               </div>
               <button className="border-black hover:bg-sky-950 font-sans rounded-sm h-10 w-24 md:h-10 md:w-28 text-white font-semibold bg-sky-800">
-                <a href="/about">View More</a>
+                 <Link to="/about">View More</Link>,
               </button>
             </div>
             <p className="legend">Fresh Stitch</p>
@@ -106,7 +106,7 @@ const Home = () => {
         <div className="container mx-auto max-w-7xl text-center">
           <h2 className="text-4xl font-bold text-gray-900 mb-8">About Us</h2>
           <p className="text-lg text-gray-700 leading-relaxed mb-12">
-            At Laundry Wallah, we are dedicated to providing you with top-notch laundry and tailoring services.
+            At Fresh Stitch, we are dedicated to providing you with top-notch laundry and tailoring services.
             Whether you need washing, dry cleaning, or tailoring, we make it easy to book services online,
             ensuring convenience and high-quality care for your clothes. Our expert team handles each garment with
             the utmost care, offering a seamless experience from pickup to delivery.
@@ -179,14 +179,14 @@ const Home = () => {
           <ServiceCard
             title="Tailoring"
             description="Expert tailoring services for all garments."
-            imgSrc={sewing}
+            imgSrc={stitching}
             link="/stitching"
           />
           <ServiceCard
             title="Alterations"
             description="Quick and precise alterations to fit you perfectly."
             imgSrc={alteration}
-            link="/alteration"
+            link="/stitching"
           />
         </div>
       </section>
@@ -238,8 +238,8 @@ const Home = () => {
         <div className="flex justify-between items-center">
           <div>
             <h3 className="font-bold text-lg text-black"><a href="./contact">Contact Us</a> </h3>
-            <p>Laundry Wallah Service</p>
-            <p>Email: LaundryWallah.1010@gmail.com</p>
+            <p>Fresh Stitch Service</p>
+            <p>Email:FreshStitch.1010@gmail.com</p>
             <p>Phone: +91 790-5739-950</p>
           </div>
           <div>

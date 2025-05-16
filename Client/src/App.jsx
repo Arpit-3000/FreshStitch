@@ -64,7 +64,7 @@ const AppRoutes = () => {
         <Route path="/wash-and-fold" element={<WashAndFoldDetails />} />
         <Route path="/wash-and-iron" element={<WashAndIronDetails />} />
         <Route path="/iron-and-fold" element={<IronAndFoldDetails />} />
-        <Route path="/Dry-Cleaning" element={<DryCleaning />} />
+        <Route path="/dry-cleaning" element={<DryCleaning />} />
         
         <Route path="/stitching" element={<Stitching />} />
         <Route path="/lehenga" element={<Lehenga />} />

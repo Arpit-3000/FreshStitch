@@ -134,6 +134,7 @@ function RegisterForm({ toggleform }) {
             <div className="register-page-main">
                 <form className="form-page-register">
                     <p className="Sign-in-heading-register">Sign up</p>
+                    <h1 className="text-3xl font-bold">This page isn't working, please sign-in with google in Login/sign section</h1>
                     <br/>
                     <input
                         type="email"

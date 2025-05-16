@@ -129,6 +129,7 @@ function LoginForm() {
             <div className="form-container">
                 <form className="form-page" onSubmit={handleLogin}>
                     <p className="Sign-in-heading">Sign in</p>
+                    <h1 className="text-2xl font-bold mb-3">Please sign in with Google icon only</h1>
                     <input type="email" placeholder="Email" value={username} onChange={handleOnChangeUsername} />
                     <br />
                     <input type="password" placeholder="Password" value={password} onChange={handleOnChangePassword} />
@@ -140,7 +141,7 @@ function LoginForm() {
                         <button type="button" onClick={handleGoogleLogin} className="google-sign-in-btn">
                             <img src={google} alt="Google" />
                         </button>
-                        <img src={facebook} className="facebook-sign-in" alt="Facebook" />
+                        {/* <img src={facebook} className="facebook-sign-in" alt="Facebook" /> */}
                     </div>
                 </form>
             </div>

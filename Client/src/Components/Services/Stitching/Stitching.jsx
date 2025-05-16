@@ -47,7 +47,7 @@ const Stitching = () => {
     
         const fetchCategories = async () => {
             try {
-                const response = await fetch("http://localhost:3000/api/tailoringCategories");
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/tailoringCategories`);
                 const data = await response.json();
                 setCategories(data);
                 setLoading(false);
@@ -122,8 +122,7 @@ const Stitching = () => {
                                     <Link to="/wash-and-fold">Wash & Fold</Link>,
                                     <Link to="/wash-and-iron">Wash & Iron</Link>,
                                     <Link to="/Iron-and-Fold">Iron & Fold</Link>,
-                                    <Link to="dry-cleaning">Dry Cleaning</Link>,
-                                    <Link to="/sewing">Sewing</Link>,
+                                    <Link to="/dry-cleaning">Dry Cleaning</Link>,
                                     <Link to="/stitching">Stitching</Link>,
 
                                 ].map((service, index) => (
@@ -163,11 +162,40 @@ const Stitching = () => {
                                         {category.items.map((item, itemIndex) => (
                                             <div key={itemIndex} className="flex justify-between items-center px-6 py-2 border-b">
                                                 <span className="flex-1">{item.name}</span>
-                                                <button
-                                                    onClick={() => handleChooseStyle(item)}
-                                                    className="ml-4 px-4 py-2 bg-cadetblue text-white rounded hover:bg-cadetdark">
-                                                    Choose Your Style
-                                                </button>
+   <button
+    onClick={() => handleChooseStyle(item)}
+    disabled={
+        item?.name &&
+        [
+            "pant",
+            "suit",
+            "kurta-kurti",
+            "trouser",
+            "top",
+            "blazer",
+            "skirt"
+        ].includes(item.name.toLowerCase())
+    }
+    className={`ml-4 px-4 py-2 rounded transition-colors  
+        ${
+            item?.name &&
+            [
+                "pant",
+                "suit",
+                "kurta-kurti",
+                "trouser",
+                "top",
+                "blazer",
+                "skirt"
+            ].includes(item.name.toLowerCase())
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-cadetblue text-white hover:bg-cadetdark"
+        }`}
+>
+    Choose Your Style
+</button>
+
+
                                             </div>
                                         ))}
                                     </div>
@@ -236,7 +264,7 @@ const Stitching = () => {
                     <section className="mt-12">
                         <h2 className="text-2xl font-bold text-cadetdark">Details of Services</h2>
                         <p className="mt-4 text-gray-600">
-                            Laun-Tail helps you find laundry services near you and ensures that
+                            Fresh Stitch helps you find laundry services near you and ensures that
                             your clothes are handled by professionals. Every customer’s laundry
                             is washed with care to preserve their quality. Our services include:
                         </p>
@@ -288,9 +316,9 @@ const Stitching = () => {
                 <div className="flex justify-between items-center">
                     <div>
                         <h3 className="font-bold text-lg"><a href="./contact">Contact Us</a></h3>
-                        <p>Laundry Wallah Service</p>
-                        <p>Email: LaundryWallah.1010@gmail.com</p>
-                        <p>Phone: +91 790-5739-950</p>
+                        <p>Fresh Stitch Service</p>
+                        <p>Email: FreshStitch.1010@gmail.com</p>
+                        <p>Phone: +91 790-5739-942</p>
                     </div>
                     <div>
                         <h3 className="font-bold text-lg">Follow Us</h3>
