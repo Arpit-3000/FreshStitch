@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { Pose } from '@mediapipe/pose';
+import * as mpPose from '@mediapipe/pose';
 import { Camera } from '@mediapipe/camera_utils';
 
 
@@ -24,11 +24,10 @@ const CameraWithARShirt = ({ filterImage, onClose }) => {
       shirtImgRef.current = shirtImg;
     };
 
-  const pose = new Pose({
-
-      locateFile: (file) =>
-        `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
-    });
+  const pose = new mpPose.Pose({
+  locateFile: (file) =>
+    `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
+});
 
     pose.setOptions({
       modelComplexity: 1,
