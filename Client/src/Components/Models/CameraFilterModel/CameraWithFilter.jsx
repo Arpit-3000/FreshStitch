@@ -1,6 +1,4 @@
 import React, { useEffect, useRef } from "react";
-import * as mpPose from '@mediapipe/pose';
-import { Camera } from '@mediapipe/camera_utils';
 
 
 const lerp = (a, b, t) => a * (1 - t) + b * t;
@@ -18,44 +16,45 @@ const CameraWithARShirt = ({ filterImage, onClose }) => {
   });
 
   useEffect(() => {
-    const shirtImg = new Image();
-    shirtImg.src = filterImage;
-    shirtImg.onload = () => {
-      shirtImgRef.current = shirtImg;
-    };
+  const shirtImg = new Image();
+  shirtImg.src = filterImage;
+  shirtImg.onload = () => {
+    shirtImgRef.current = shirtImg;
+  };
 
-  const pose = new mpPose.Pose({
-  locateFile: (file) =>
-    `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
-});
+  const pose = new window.Pose({
+    locateFile: (file) =>
+      `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
+  });
 
-    pose.setOptions({
-      modelComplexity: 1,
-      smoothLandmarks: true,
-      enableSegmentation: false,
-      minDetectionConfidence: 0.5,
-      minTrackingConfidence: 0.5,
+  pose.setOptions({
+    modelComplexity: 1,
+    smoothLandmarks: true,
+    enableSegmentation: false,
+    minDetectionConfidence: 0.5,
+    minTrackingConfidence: 0.5,
+  });
+
+  pose.onResults(onResults);
+
+  let camera = null;
+
+  if (videoRef.current) {
+    camera = new window.Camera(videoRef.current, {
+      onFrame: async () => {
+        await pose.send({ image: videoRef.current });
+      },
+      width: 640,
+      height: 480,
     });
+    camera.start();
+  }
 
-    pose.onResults(onResults);
+  return () => {
+    if (camera) camera.stop();
+  };
+}, [filterImage]);
 
-    let camera = null;
-
-    if (videoRef.current) {
-       camera = new Camera(videoRef.current, {
-        onFrame: async () => {
-          await pose.send({ image: videoRef.current });
-        },
-        width: 640,
-        height: 480,
-      });
-      camera.start();
-    }
-
-    return () => {
-      if (camera) camera.stop();
-    };
-  }, [filterImage]);
 
   const onResults = (results) => {
     const canvasCtx = canvasRef.current.getContext("2d");
