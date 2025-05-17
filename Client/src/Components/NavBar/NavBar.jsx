@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { deleteUser } from "firebase/auth";
 import './NavBar.css';
 import account from './account-png.png';
-import preview from './Preview.png';
+import logo from './Logo.png';
 import { toast } from 'react-toastify'; // Import react-toastify
 import 'react-toastify/dist/ReactToastify.css';
 import { auth } from "../../../firebase";
@@ -109,7 +109,7 @@ const Navbar = () => {
       <nav className="navbar">
         <div className="navbar-logo flex">
           <Link to="/">
-            <img src={preview} alt="Logo" style={{ display: 'block' }} />
+            <img src={logo} alt="Logo" style={{ display: 'block' }} />
           </Link>
           <Link to="/" className=' font-serif'>Fresh Stitch</Link>
         </div>
