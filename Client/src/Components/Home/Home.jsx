@@ -64,22 +64,19 @@ const Home = () => {
               alt="Laundry Service"
               style={{ width: '100%', height: 'auto', maxHeight: '700px' }}
             />
-          <div className="absolute flex flex-col space-y-4 left-4 top-20 md:left-20 lg:left-40 md:top-28 lg:top-36 w-11/12 md:w-3/4 lg:w-[32rem] max-w-full">
-  <div className="text-black font-medium text-3xl md:text-5xl lg:text-6xl leading-tight font-serif">
-    Welcome to
-  </div>
-  <div className="text-black text-xl md:text-2xl lg:text-3xl font-serif leading-snug">
-    Fresh Stitch - Perfect place for Dhulai
-  </div>
-  <button className="bg-sky-800 hover:bg-sky-950 text-white font-semibold font-sans rounded-sm h-10 w-28 md:w-32 transition duration-300">
-    <Link to="/about" className="block w-full h-full text-center leading-10">
-      View More
-    </Link>
-  </button>
-</div>
-<p className="legend hidden sm:block text-sm text-gray-600 mt-4">
-  Fresh Stitch
-</p>
+         <div className="absolute flex-col space-y-5 left-5 top-20 md:left-20 lg:left-40 md:top-32 lg:top-40 h-auto w-11/12 md:w-3/4 lg:w-96">
+              <div className="text-black font-medium text-3xl md:text-5xl lg:text-6xl pb-2 md:pb-4 font-serif">
+                Welcome to
+              </div>
+              <div className="text-black text-xl md:text-2xl lg:text-3xl font-serif pb-2 md:pb-4">
+                Fresh Stitch - Perfect place for Dhulai
+              </div>
+              <button className="border-black hover:bg-sky-950 font-sans rounded-sm h-10 w-24 md:h-10 md:w-28 text-white font-semibold bg-sky-800">
+                 <Link to="/about">View More</Link>,
+              </button>
+            </div>
+            <p className="legend">Fresh Stitch</p> make this responsive '
+
 
           </div>
 
