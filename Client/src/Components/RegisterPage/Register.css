@@ -122,3 +122,83 @@ input[type="password"]{
 .sign-up-btn-register:hover{
     background-color: rgba(255, 235, 205, 0.778);
 }
+/* Responsive tweaks for Register Page */
+@media (max-width: 768px) {
+  .register-page-main {
+    width: 100vw;
+    height: auto;
+    padding: 2rem 1rem;
+    background-position-y: -4rem;
+    background-position-x: center;
+    background-size: cover;
+    justify-content: center;
+  }
+  .register-page-main {
+    background-image: none !important;
+  }
+
+  .form-container-side {
+    background-image: none !important;
+  }
+
+  .form-container-side {
+    width: 100vw;
+    height: auto;
+    padding: 2rem 1rem;
+    background-size: cover;
+  }
+
+  .form-page-register {
+    margin-top: 2em;
+    width: 100%;
+    max-width: 350px;
+    padding: 0 1rem;
+    box-sizing: border-box;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="password"] {
+    width: 100%;
+    max-width: 100%;
+    padding-left: 3.5em;
+    height: 2.8em;
+    background-size: 2.5em;
+  }
+
+  .sign-up-btn-register,
+  .Sign-in-btn-register {
+    width: 100%;
+    max-width: 200px;
+    margin-top: 1.5em;
+  }
+
+  .tagline-register {
+    font-size: large;
+    margin-top: 1em;
+    padding: 0 1rem;
+  }
+
+  .register-title p {
+    color: black;
+    font-size: medium;
+  }
+}
+
+/* For smaller phones */
+@media (max-width: 480px) {
+  input[type="text"],
+  input[type="email"],
+  input[type="password"] {
+    height: 2.5em;
+    background-size: 2em;
+  }
+
+  .Sign-in-heading-register {
+    font-size: large;
+  }
+
+  .tagline-register {
+    font-size: medium;
+  }
+}

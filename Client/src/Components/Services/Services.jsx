@@ -142,8 +142,8 @@ const Services = () => {
             >
               Contact Us
             </h3>
-            <p>Laundry Wallah Service</p>
-            <p>Email: LaundryWallah.1010@gmail.com</p>
+            <p>Fresh Stitch Service</p>
+            <p>Email: FreshStitch.1010@gmail.com</p>
             <p>Phone: +91 790-5739-950</p>
           </div>
           <div>

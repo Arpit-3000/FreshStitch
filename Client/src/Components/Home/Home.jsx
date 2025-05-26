@@ -1,6 +1,6 @@
 
 import { Carousel } from "react-responsive-carousel";
-import { Link,useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import file2 from './file2.jpg';
@@ -28,7 +28,7 @@ const Home = () => {
     window.scrollTo(0, 0); // Scroll to top when this page loads
   }, []);
 
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
 
   return (
@@ -64,39 +64,64 @@ const Home = () => {
               alt="Laundry Service"
               style={{ width: '100%', height: 'auto', maxHeight: '700px' }}
             />
-            <div className="absolute flex-col space-y-5 left-5 top-20 md:left-20 lg:left-40 md:top-32 lg:top-40 h-auto w-11/12 md:w-3/4 lg:w-96">
+            <div
+              className="absolute flex-col space-y-5 top-10 left-4 sm:top-20 sm:left-10 md:left-20 lg:left-40 h-auto w-11/12 sm:w-3/4 lg:w-96 max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg"
+              style={{ backgroundColor: 'rgba(255, 255, 255, 0.0)' }} // optional for visibility
+            >
+
               <div className="text-black font-medium text-3xl md:text-5xl lg:text-6xl pb-2 md:pb-4 font-serif">
                 Welcome to
               </div>
               <div className="text-black text-xl md:text-2xl lg:text-3xl font-serif pb-2 md:pb-4">
-                Fresh Stitch - Perfect place for Dhulai
+                Fresh Stitch <br></br> Perfect place for Dhulai
               </div>
               <button className="border-black hover:bg-sky-950 font-sans rounded-sm h-10 w-24 md:h-10 md:w-28 text-white font-semibold bg-sky-800">
-                 <Link to="/about">View More</Link>,
+                <Link to="/about">View More</Link>
               </button>
             </div>
-            <p className="legend">Fresh Stitch</p>
+            {/* <p className="legend">Fresh Stitch</p> */}
           </div>
 
-          <div>
+          <div
+            className="relative"
+            style={{ maxHeight: '700px' }}
+          >
             <img
               src={file2}
               alt="Tailoring Service"
               style={{ width: '100%', height: 'auto', maxHeight: '700px' }}
             />
-            <div className="absolute flex-col space-y-5 right-5 top-20 md:right-20 lg:right-40 md:top-32 lg:top-40 h-auto w-11/12 md:w-3/4 lg:w-96">
-              <div className="text-black font-medium text-3xl md:text-5xl lg:text-6xl pb-2 md:pb-4 font-serif">
+
+            <div
+              className="
+    absolute flex flex-col
+    top-10 right-4
+    sm:top-20 sm:right-10
+    md:right-20 md:top-32
+    lg:right-40 lg:top-40
+    h-auto
+    w-11/12
+    sm:w-3/4
+    lg:w-96
+    max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg
+    bg-transparent
+    items-center
+  "
+            >
+              <div className="text-black font-medium text-3xl md:text-5xl lg:text-6xl pb-2 md:pb-4 font-serif text-center">
                 Welcome to
               </div>
-              <div className="text-black text-xl md:text-2xl lg:text-3xl font-serif pb-2 md:pb-4">
-                Fresh Sticth - Perfect place for Silai
+
+              <div className="text-black text-xl md:text-2xl lg:text-3xl font-serif pb-2 md:pb-4 text-center">
+                Fresh Stitch <br /> Perfect place for Silai
               </div>
+
               <button className="border-black hover:bg-sky-950 font-sans rounded-sm h-10 w-24 md:h-10 md:w-28 text-white font-semibold bg-sky-800">
-                 <Link to="/about">View More</Link>,
+                <Link to="/about">View More</Link>
               </button>
             </div>
-            <p className="legend">Fresh Stitch</p>
           </div>
+
         </Carousel>
       </div>
 

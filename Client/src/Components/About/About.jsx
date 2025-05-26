@@ -95,8 +95,8 @@ const AboutUs = () => {
         <div className="flex justify-between items-center">
           <div>
             <h3 className="font-bold text-lg text-black"  onClick={() => navigate(Contact)} >Contact Us</h3>
-            <p>Laundry Wallah Service</p>
-            <p>Email: LaundryWallah.1010@gmail.com</p>
+            <p>Fresh Stitch Service</p>
+            <p>Email: FreshStitch.1010@gmail.com</p>
             <p>Phone: +91 790-5739-950</p>
           </div>
           <div>

@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from "react";
-import { Pose } from "@mediapipe/pose";
-import { Camera } from "@mediapipe/camera_utils";
+import * as mpPose from '@mediapipe/pose';
+
+import { Camera } from '@mediapipe/camera_utils';
+
 
 const lerp = (a, b, t) => a * (1 - t) + b * t;
 
@@ -23,10 +25,11 @@ const CameraWithARShirt = ({ filterImage, onClose }) => {
       shirtImgRef.current = shirtImg;
     };
 
-    const pose = new Pose({
-      locateFile: (file) =>
-        `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
-    });
+    const pose = new mpPose.Pose({
+  locateFile: (file) =>
+    `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
+});
+
 
     pose.setOptions({
       modelComplexity: 1,
@@ -74,19 +77,19 @@ const CameraWithARShirt = ({ filterImage, onClose }) => {
       const y1 = leftShoulder.y * 480;
       const x2 = rightShoulder.x * 640;
       const y2 = rightShoulder.y * 480;
-      
+
       const midX = (x1 + x2) / 2;
       const midY = (y1 + y2) / 2;
-      
-      const shoulderWidth = Math.abs(x2 - x1); 
+
+      const shoulderWidth = Math.abs(x2 - x1);
       const hipY = ((leftHip.y + rightHip.y) / 2) * 480;
-      
-      const height = hipY - midY + 40; 
-      
-      const shirtWidth = shoulderWidth * 1.8; 
-      const shirtHeight = height * 1.2; 
-      
-      
+
+      const height = hipY - midY + 40;
+
+      const shirtWidth = shoulderWidth * 1.8;
+      const shirtHeight = height * 1.2;
+
+
       lastState.current.x = lerp(lastState.current.x, midX, 0.3);
       lastState.current.y = lerp(lastState.current.y, midY, 0.3);
       lastState.current.width = lerp(lastState.current.width, shirtWidth, 0.3);
@@ -116,7 +119,9 @@ const CameraWithARShirt = ({ filterImage, onClose }) => {
         height="480"
         playsInline
         muted
-      ></video>
+        autoPlay
+      />
+
       <canvas
         ref={canvasRef}
         width="840"

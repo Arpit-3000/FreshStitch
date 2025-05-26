@@ -51,10 +51,10 @@ const Navbar = () => {
       setUser(currentUser);
       setIsLoggedIn(!!currentUser);
     });
-  
+
     return () => unsubscribe();
   }, []);
-  
+
 
 
   const handleLogout = async () => {
@@ -111,11 +111,11 @@ const Navbar = () => {
           <Link to="/">
             <img src={logo} alt="Logo" style={{ display: 'block' }} />
           </Link>
-          <Link to="/" className=' font-serif'>Fresh Stitch</Link>
+          <Link to="/" className=' font-serif' onClick={() => { setIsOpen(false) }} >Fresh Stitch</Link>
         </div>
 
         <div className={`navbar-links ${isOpen ? 'open' : ''}`} >
-          <Link to="/" className=' font-serif'>Home</Link>
+          <Link to="/" className=' font-serif' onClick={() => { setIsOpen(false) }}>Home</Link>
 
           {/* Services Dropdown Button */}
           <div className="services-section">
@@ -130,22 +130,28 @@ const Navbar = () => {
                 <Link
                   to="/services#laundry-services"
                   className="dropdown-item font-serif font-light"
-                  onClick={() => setShowServicesDropdown(false)} // Close dropdown on click
+                  onClick={() => {
+                    setShowServicesDropdown(false);
+                    setIsOpen(false);  // <-- Add this line
+                  }}
                 >
                   Laundry Services
                 </Link>
                 <Link
                   to="/services#tailoring-services"
                   className="dropdown-item font-serif font-light"
-                  onClick={() => setShowServicesDropdown(false)} // Close dropdown on click
+                  onClick={() => {
+                    setShowServicesDropdown(false);
+                    setIsOpen(false);  // <-- Add this line
+                  }}
                 >
                   Tailoring Services
                 </Link>
               </div>
             )}
           </div>
-          <Link to="/about" className=' font-serif'>About</Link>
-          <Link to="/contact" className=' font-serif'>Contact</Link>
+          <Link to="/about" className=' font-serif' onClick={()=>{setIsOpen(false)}}>About</Link>
+          <Link to="/contact" className=' font-serif'  onClick={()=>{setIsOpen(false)}}>Contact</Link>
 
           <div className="account-section">
             <img
@@ -160,12 +166,18 @@ const Navbar = () => {
                 {isLoggedIn ? (
                   <>
                     {/* <Link to="/profile" className="dropdown-item font-serif  " onClick={() => { setShowDropdown(false) }} >My Profile</Link> */}
-                    <Link to="/my-orders" className='dropdown-item font-serif' onClick={() => { setShowDropdown(false) }}>Track Orders</Link>
+                    <Link to="/my-orders" className='dropdown-item font-serif' onClick={() => {
+                      setShowDropdown(false);
+                      setIsOpen(false);  // <-- Add this line
+                    }}>Track Orders</Link>
                     <button className="logout-btn dropdown-item font-serif w-full" onClick={handleLogout}>Logout</button>
                   </>
                 ) : (
                   <>
-                    <Link to="/LoginPage" className="dropdown-item font-serif" onClick={() => setShowDropdown(false)}>Login</Link>
+                    <Link to="/LoginPage" className="dropdown-item font-serif" onClick={() => {
+                      setShowDropdown(false);
+                      setIsOpen(false);  // <-- Add this line
+                    }}>Login</Link>
                     <Link to="/RegisterPage" className="dropdown-item font-serif" onClick={() => setShowDropdown(false)}>Sign Up</Link>
                   </>
                 )}

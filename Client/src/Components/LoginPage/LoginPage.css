@@ -150,6 +150,119 @@ input[type="Password"]{
 .Sign-up-btn:hover{
     background-color: rgba(255, 235, 205, 0.778);
 }
+/* Responsive tweaks for mobile devices */
+@media (max-width: 768px) {
+  .mainn {
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden;
+    
+  }
+  
+
+  .register-page {
+    background-image: none !important;
+    width: 100vw;
+    height: auto;
+    padding: 2rem 1rem;
+    background-position-y: -2em;
+    background-size: cover;
+  }
+
+  .tagline {
+    font-size: large;
+    margin-top: 1.5em;
+  }
+
+  .register-title {
+    font-size: medium;
+    margin-top: 2em;
+    padding: 0 1rem;
+  }
+
+  .welcome-msg {
+    font-size: medium;
+    margin: 1em 0;
+    color: black;
+  }
+
+  .Sign-up-btn {
+    width: 100%;
+    max-width: 200px;
+    margin-top: 2em;
+  }
+
+  .form-container {
+    width: 100vw;
+    height: auto;
+    padding: 2rem 1rem;
+    justify-content: center;
+    background-size: cover;
+    background-image: none !important;
+  }
+
+  .form-page {
+    margin-top: 2em;
+    margin-right: 0;
+    width: 100%;
+    max-width: 350px;
+  }
+
+  input[type="email"],
+  input[type="password"] {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  input[type="email"] {
+    padding-left: 3.5em;
+  }
+
+  input[type="password"] {
+    padding-left: 3.5em;
+  }
+
+  .sign-in-btn,
+  .google-sign-in-btn,
+  .Sign-up-btn {
+    width: 100%;
+  }
+
+  .sign-in-other-option {
+    gap: 1rem;
+  }
+
+  .google-sign-in-btn img {
+    width: 40px;  /* Scale down google icon */
+  }
+}
+
+/* Adjust input background icon sizes on mobile */
+@media (max-width: 480px) {
+  input[type="email"],
+  input[type="password"] {
+    height: 2.8em;
+  }
+
+  input[type="email"] {
+    background-size: 2.5em;
+  }
+
+  input[type="password"] {
+    background-size: 2.5em;
+  }
+
+  .Sign-in-heading {
+    font-size: large;
+  }
+  .Sign-up-btn,
+  .sign-in-btn {
+    width: 100%;
+    max-width: 200px; /* or adjust as needed */
+    box-sizing: border-box; /* prevent padding/margin overflow */
+  }
+}
+
 
 
 

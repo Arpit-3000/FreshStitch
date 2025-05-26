@@ -39,7 +39,7 @@ const AppRoutes = () => {
   const isAdminRoute = location.pathname.startsWith('/admin');
 
   return (
-    <>
+     <div className="max-w-screen overflow-x-hidden">
       {/* Toast messages */}
       <ToastContainer
         position="bottom-center"
@@ -83,7 +83,7 @@ const AppRoutes = () => {
         <Route path="/admin-registration" element={<AdminRegistration />} />
         {/* <Route path="/admin-customers" element={<AdminCustomers />} /> */}
       </Routes>
-    </>
+    </div>
   );
 };
 
