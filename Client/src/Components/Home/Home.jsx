@@ -65,8 +65,7 @@ const Home = () => {
               style={{ width: '100%', height: 'auto', maxHeight: '700px' }}
             />
             <div
-              className="absolute flex-col space-y-5 top-10 left-4 sm:top-20 sm:left-10 md:left-20 lg:left-40 h-auto w-11/12 sm:w-3/4 lg:w-96 max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg"
-              style={{ backgroundColor: 'rgba(255, 255, 255, 0.0)' }} // optional for visibility
+              className="absolute flex-col space-y-5 left-5 top-20 md:left-20 lg:left-40 md:top-32 lg:top-40 h-auto w-11/12 md:w-3/4 lg:w-96"
             >
 
               <div className="text-black font-medium text-3xl md:text-5xl lg:text-6xl pb-2 md:pb-4 font-serif">
