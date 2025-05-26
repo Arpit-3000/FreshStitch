@@ -3,7 +3,7 @@
 **Fresh Stitch** is a modern, user-friendly laundry and tailoring service web application that allows users to book services, explore clothing categories, manage their orders, and track their laundry or tailoring jobs in real-time.
 
 🚀 **Live Demo**  
-🔗 [Visit Fresh Stitch on Vercel](https://fresh-stitch.vercel.app/)
+🔗 [Visit Fresh Stitch on Vercel](https://fresh-stitch-4bjx.vercel.app/)
 
 ---
 
