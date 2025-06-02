@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { Pose } from '@mediapipe/pose';
+
 
 import { Camera } from '@mediapipe/camera_utils';
 
@@ -18,47 +18,50 @@ const CameraWithARShirt = ({ filterImage, onClose }) => {
     height: 200,
   });
 
-  useEffect(() => {
-    const shirtImg = new Image();
-    shirtImg.src = filterImage;
-    shirtImg.onload = () => {
-      shirtImgRef.current = shirtImg;
-    };
+ useEffect(() => {
+  const loadPoseAndStartCamera = async () => {
+    const script = document.createElement("script");
+    script.src = "https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js";
+    script.async = true;
+    script.onload = () => {
+      const shirtImg = new Image();
+      shirtImg.src = filterImage;
+      shirtImg.onload = () => {
+        shirtImgRef.current = shirtImg;
+      };
 
-    const pose = new Pose({
-  locateFile: (file) =>
-    `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
-});
-
-
-
-    pose.setOptions({
-      modelComplexity: 1,
-      smoothLandmarks: true,
-      enableSegmentation: false,
-      minDetectionConfidence: 0.5,
-      minTrackingConfidence: 0.5,
-    });
-
-    pose.onResults(onResults);
-
-    let camera = null;
-
-    if (videoRef.current) {
-      camera = new Camera(videoRef.current, {
-        onFrame: async () => {
-          await pose.send({ image: videoRef.current });
-        },
-        width: 640,
-        height: 480,
+      const pose = new window.Pose({
+        locateFile: (file) =>
+          `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
       });
-      camera.start();
-    }
 
-    return () => {
-      if (camera) camera.stop();
+      pose.setOptions({
+        modelComplexity: 1,
+        smoothLandmarks: true,
+        enableSegmentation: false,
+        minDetectionConfidence: 0.5,
+        minTrackingConfidence: 0.5,
+      });
+
+      pose.onResults(onResults);
+
+      if (videoRef.current) {
+        const camera = new Camera(videoRef.current, {
+          onFrame: async () => {
+            await pose.send({ image: videoRef.current });
+          },
+          width: 640,
+          height: 480,
+        });
+        camera.start();
+      }
     };
-  }, [filterImage]);
+
+    document.body.appendChild(script);
+  };
+
+  loadPoseAndStartCamera();
+}, [filterImage]);
 
   const onResults = (results) => {
     const canvasCtx = canvasRef.current.getContext("2d");
