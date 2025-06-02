@@ -9,59 +9,60 @@ const CameraWithARShirt = ({ filterImage, onClose }) => {
   const shirtImgRef = useRef(null);
   const lastState = useRef({ x: 320, y: 240, width: 150, height: 200 });
 
-  useEffect(() => {
-    if (typeof window === "undefined") return; // Avoid SSR
+useEffect(() => {
+  if (typeof window === "undefined") return;
 
-    let camera = null;
-    let poseInstance = null;
+  const shirtImg = new Image();
+  shirtImg.src = filterImage;
+  shirtImg.onload = () => {
+    shirtImgRef.current = shirtImg;
+  };
 
-    const shirtImg = new Image();
-    shirtImg.src = filterImage;
-    shirtImg.onload = () => {
-      shirtImgRef.current = shirtImg;
-    };
+  let camera = null;
 
-    const setupCameraAndPose = async () => {
-      const mp = await import("@mediapipe/pose");
+  const setup = async () => {
+    const poseModule = await import("@mediapipe/pose");
+    const { Pose } = poseModule;
 
-      if (!mp.Pose) {
-        console.error("Pose not found in module:", mp);
-        return;
-      }
+    if (!Pose) {
+      console.error("Pose not found in module:", poseModule);
+      return;
+    }
 
-      poseInstance = new mp.Pose({
-        locateFile: (file) =>
-          `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
+    const pose = new Pose({
+      locateFile: (file) =>
+        `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
+    });
+
+    pose.setOptions({
+      modelComplexity: 1,
+      smoothLandmarks: true,
+      enableSegmentation: false,
+      minDetectionConfidence: 0.5,
+      minTrackingConfidence: 0.5,
+    });
+
+    pose.onResults(onResults);
+
+    if (videoRef.current) {
+      camera = new Camera(videoRef.current, {
+        onFrame: async () => {
+          await pose.send({ image: videoRef.current });
+        },
+        width: 640,
+        height: 480,
       });
+      camera.start();
+    }
+  };
 
-      poseInstance.setOptions({
-        modelComplexity: 1,
-        smoothLandmarks: true,
-        enableSegmentation: false,
-        minDetectionConfidence: 0.5,
-        minTrackingConfidence: 0.5,
-      });
+  setup();
 
-      poseInstance.onResults(onResults);
+  return () => {
+    if (camera) camera.stop();
+  };
+}, [filterImage]);
 
-      if (videoRef.current) {
-        camera = new Camera(videoRef.current, {
-          onFrame: async () => {
-            await poseInstance.send({ image: videoRef.current });
-          },
-          width: 640,
-          height: 480,
-        });
-        camera.start();
-      }
-    };
-
-    setupCameraAndPose();
-
-    return () => {
-      if (camera) camera.stop();
-    };
-  }, [filterImage]);
 
   const onResults = (results) => {
     const canvasCtx = canvasRef.current.getContext("2d");
