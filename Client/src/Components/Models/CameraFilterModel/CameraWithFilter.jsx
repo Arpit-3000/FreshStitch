@@ -7,14 +7,11 @@ const CameraWithARShirt = ({ filterImage, onClose }) => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const shirtImgRef = useRef(null);
-  const lastState = useRef({
-    x: 320,
-    y: 240,
-    width: 150,
-    height: 200,
-  });
+  const lastState = useRef({ x: 320, y: 240, width: 150, height: 200 });
 
   useEffect(() => {
+    if (typeof window === "undefined") return; // Avoid SSR
+
     let camera = null;
     let poseInstance = null;
 
@@ -25,18 +22,17 @@ const CameraWithARShirt = ({ filterImage, onClose }) => {
     };
 
     const setupCameraAndPose = async () => {
-     const poseModule = await import("@mediapipe/pose");
-const Pose = poseModule.Pose || poseModule.default?.Pose;
+      const mp = await import("@mediapipe/pose");
 
-if (!Pose) {
-  console.error("Pose constructor not found in imported module:", poseModule);
-  return;
-}
+      if (!mp.Pose) {
+        console.error("Pose not found in module:", mp);
+        return;
+      }
 
-const poseInstance = new Pose({
-  locateFile: (file) =>
-    `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
-});
+      poseInstance = new mp.Pose({
+        locateFile: (file) =>
+          `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
+      });
 
       poseInstance.setOptions({
         modelComplexity: 1,
@@ -68,11 +64,9 @@ const poseInstance = new Pose({
   }, [filterImage]);
 
   const onResults = (results) => {
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
-
-    ctx.clearRect(0, 0, 640, 480);
-    ctx.drawImage(results.image, 0, 0, 640, 480);
+    const canvasCtx = canvasRef.current.getContext("2d");
+    canvasCtx.clearRect(0, 0, 640, 480);
+    canvasCtx.drawImage(results.image, 0, 0, 640, 480);
 
     if (!shirtImgRef.current || !results.poseLandmarks) return;
 
@@ -90,10 +84,11 @@ const poseInstance = new Pose({
 
       const midX = (x1 + x2) / 2;
       const midY = (y1 + y2) / 2;
+
       const shoulderWidth = Math.abs(x2 - x1);
       const hipY = ((leftHip.y + rightHip.y) / 2) * 480;
-
       const height = hipY - midY + 40;
+
       const shirtWidth = shoulderWidth * 1.8;
       const shirtHeight = height * 1.2;
 
@@ -105,15 +100,15 @@ const poseInstance = new Pose({
       const verticalOffset = -80;
       lastState.current.y += verticalOffset;
 
-      ctx.globalAlpha = 0.95;
-      ctx.drawImage(
+      canvasCtx.globalAlpha = 0.95;
+      canvasCtx.drawImage(
         shirtImgRef.current,
         lastState.current.x - lastState.current.width / 2,
         lastState.current.y,
         lastState.current.width,
         lastState.current.height
       );
-      ctx.globalAlpha = 1;
+      canvasCtx.globalAlpha = 1;
     }
   };
 
