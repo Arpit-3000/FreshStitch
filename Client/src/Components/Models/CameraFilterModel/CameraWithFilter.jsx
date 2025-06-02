@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
-import { Camera } from "@mediapipe/camera_utils";
-import { Pose } from "@mediapipe/pose";
+import { Camera } from "@mediapipe/camera_utils"; // This works on client
+// ❌ Do NOT import Pose statically
+// import { Pose } from "@mediapipe/pose";
 
 const lerp = (a, b, t) => a * (1 - t) + b * t;
 
@@ -8,7 +9,6 @@ const CameraWithARShirt = ({ filterImage, onClose }) => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const shirtImgRef = useRef(null);
-
   const lastState = useRef({
     x: 320,
     y: 240,
@@ -17,34 +17,37 @@ const CameraWithARShirt = ({ filterImage, onClose }) => {
   });
 
   useEffect(() => {
+    let camera = null;
+    let poseInstance = null;
+
     const shirtImg = new Image();
     shirtImg.src = filterImage;
     shirtImg.onload = () => {
       shirtImgRef.current = shirtImg;
     };
 
-    const pose = new Pose({
-      locateFile: (file) =>
-        `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
-    });
+    const setupCameraAndPose = async () => {
+      const { Pose } = await import("@mediapipe/pose"); // ✅ dynamic import
 
-    pose.setOptions({
-      modelComplexity: 1,
-      smoothLandmarks: true,
-      enableSegmentation: false,
-      minDetectionConfidence: 0.5,
-      minTrackingConfidence: 0.5,
-    });
+      poseInstance = new Pose({
+        locateFile: (file) =>
+          `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
+      });
 
-    pose.onResults(onResults);
+      poseInstance.setOptions({
+        modelComplexity: 1,
+        smoothLandmarks: true,
+        enableSegmentation: false,
+        minDetectionConfidence: 0.5,
+        minTrackingConfidence: 0.5,
+      });
 
-    let camera = null;
+      poseInstance.onResults(onResults);
 
-    const startCamera = async () => {
       if (videoRef.current) {
         camera = new Camera(videoRef.current, {
           onFrame: async () => {
-            await pose.send({ image: videoRef.current });
+            await poseInstance.send({ image: videoRef.current });
           },
           width: 640,
           height: 480,
@@ -53,7 +56,7 @@ const CameraWithARShirt = ({ filterImage, onClose }) => {
       }
     };
 
-    startCamera();
+    setupCameraAndPose();
 
     return () => {
       if (camera) camera.stop();
@@ -75,8 +78,8 @@ const CameraWithARShirt = ({ filterImage, onClose }) => {
 
     if (leftShoulder && rightShoulder && leftHip && rightHip) {
       const x1 = leftShoulder.x * 640;
-      const y1 = leftShoulder.y * 480;
       const x2 = rightShoulder.x * 640;
+      const y1 = leftShoulder.y * 480;
       const y2 = rightShoulder.y * 480;
 
       const midX = (x1 + x2) / 2;
@@ -86,7 +89,6 @@ const CameraWithARShirt = ({ filterImage, onClose }) => {
       const hipY = ((leftHip.y + rightHip.y) / 2) * 480;
 
       const height = hipY - midY + 40;
-
       const shirtWidth = shoulderWidth * 1.8;
       const shirtHeight = height * 1.2;
 
