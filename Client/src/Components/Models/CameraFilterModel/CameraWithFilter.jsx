@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { Camera } from "@mediapipe/camera_utils";
+import { Pose } from "@mediapipe/pose";
 
 const lerp = (a, b, t) => a * (1 - t) + b * t;
 
@@ -15,7 +16,50 @@ const CameraWithARShirt = ({ filterImage, onClose }) => {
     height: 200,
   });
 
-  // Define onResults BEFORE usage
+  useEffect(() => {
+    const shirtImg = new Image();
+    shirtImg.src = filterImage;
+    shirtImg.onload = () => {
+      shirtImgRef.current = shirtImg;
+    };
+
+    const pose = new Pose({
+      locateFile: (file) =>
+        `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
+    });
+
+    pose.setOptions({
+      modelComplexity: 1,
+      smoothLandmarks: true,
+      enableSegmentation: false,
+      minDetectionConfidence: 0.5,
+      minTrackingConfidence: 0.5,
+    });
+
+    pose.onResults(onResults);
+
+    let camera = null;
+
+    const startCamera = async () => {
+      if (videoRef.current) {
+        camera = new Camera(videoRef.current, {
+          onFrame: async () => {
+            await pose.send({ image: videoRef.current });
+          },
+          width: 640,
+          height: 480,
+        });
+        camera.start();
+      }
+    };
+
+    startCamera();
+
+    return () => {
+      if (camera) camera.stop();
+    };
+  }, [filterImage]);
+
   const onResults = (results) => {
     const canvasCtx = canvasRef.current.getContext("2d");
     canvasCtx.clearRect(0, 0, 640, 480);
@@ -66,73 +110,26 @@ const CameraWithARShirt = ({ filterImage, onClose }) => {
     }
   };
 
-  useEffect(() => {
-    const loadPoseAndStartCamera = async () => {
-      const script = document.createElement("script");
-      script.src = "https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.min.js";
-      script.async = true;
-
-      script.onload = () => {
-        const shirtImg = new Image();
-        shirtImg.src = filterImage;
-        shirtImg.onload = () => {
-          shirtImgRef.current = shirtImg;
-        };
-
-        const pose = new window.Pose({
-          locateFile: (file) =>
-            `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
-        });
-
-        pose.setOptions({
-          modelComplexity: 1,
-          smoothLandmarks: true,
-          enableSegmentation: false,
-          minDetectionConfidence: 0.5,
-          minTrackingConfidence: 0.5,
-        });
-
-        pose.onResults(onResults);
-
-        if (videoRef.current) {
-          const camera = new Camera(videoRef.current, {
-            onFrame: async () => {
-              await pose.send({ image: videoRef.current });
-            },
-            width: 640,
-            height: 480,
-          });
-          camera.start();
-        }
-      };
-
-      document.body.appendChild(script);
-    };
-
-    loadPoseAndStartCamera();
-  }, [filterImage]);
-
   return (
     <div className="relative w-full max-w-xl mx-auto">
       <video
         ref={videoRef}
-        className="hidden"
+        className="absolute top-0 left-0"
         width="640"
         height="480"
         playsInline
         muted
         autoPlay
       />
-
       <canvas
         ref={canvasRef}
         width="640"
         height="480"
-        className="rounded shadow"
+        className="rounded shadow relative z-10"
       />
       <button
         onClick={onClose}
-        className="absolute top-2 right-2 bg-red-600 text-white px-3 py-1 rounded"
+        className="absolute top-2 right-2 bg-red-600 text-white px-3 py-1 rounded z-20"
       >
         Close
       </button>
