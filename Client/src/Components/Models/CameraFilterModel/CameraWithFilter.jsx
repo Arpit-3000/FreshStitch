@@ -19,42 +19,42 @@ useEffect(() => {
   };
 
   let camera = null;
+const setup = async () => {
+  const poseModule = await import("@mediapipe/pose");
+  const Pose = poseModule.default?.Pose || poseModule.Pose;
 
-  const setup = async () => {
-    const poseModule = await import("@mediapipe/pose");
-    const { Pose } = poseModule;
+  if (!Pose) {
+    console.error("Pose constructor not found in imported module:", poseModule);
+    return;
+  }
 
-    if (!Pose) {
-      console.error("Pose not found in module:", poseModule);
-      return;
-    }
+  const pose = new Pose({
+    locateFile: (file) =>
+      `https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469240/${file}`,
+  });
 
-    const pose = new Pose({
-      locateFile: (file) =>
-        `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
+  pose.setOptions({
+    modelComplexity: 1,
+    smoothLandmarks: true,
+    enableSegmentation: false,
+    minDetectionConfidence: 0.5,
+    minTrackingConfidence: 0.5,
+  });
+
+  pose.onResults(onResults);
+
+  if (videoRef.current) {
+    camera = new Camera(videoRef.current, {
+      onFrame: async () => {
+        await pose.send({ image: videoRef.current });
+      },
+      width: 640,
+      height: 480,
     });
+    camera.start();
+  }
+};
 
-    pose.setOptions({
-      modelComplexity: 1,
-      smoothLandmarks: true,
-      enableSegmentation: false,
-      minDetectionConfidence: 0.5,
-      minTrackingConfidence: 0.5,
-    });
-
-    pose.onResults(onResults);
-
-    if (videoRef.current) {
-      camera = new Camera(videoRef.current, {
-        onFrame: async () => {
-          await pose.send({ image: videoRef.current });
-        },
-        width: 640,
-        height: 480,
-      });
-      camera.start();
-    }
-  };
 
   setup();
 
