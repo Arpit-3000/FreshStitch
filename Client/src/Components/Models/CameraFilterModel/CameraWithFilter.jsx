@@ -1,8 +1,5 @@
 import React, { useEffect, useRef } from "react";
-
-
-import { Camera } from '@mediapipe/camera_utils';
-
+import { Camera } from "@mediapipe/camera_utils";
 
 const lerp = (a, b, t) => a * (1 - t) + b * t;
 
@@ -18,49 +15,7 @@ const CameraWithARShirt = ({ filterImage, onClose }) => {
     height: 200,
   });
 
-useEffect(() => {
-  const loadPoseAndStartCamera = async () => {
-    const script = document.createElement("script");
-    script.src = "https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.min.js";
-    script.async = true;
-
-    script.onload = () => {
-      const shirtImg = new Image();
-      shirtImg.src = filterImage;
-      shirtImg.onload = () => {
-        shirtImgRef.current = shirtImg;
-      };
-
-      const pose = new window.pose.Pose({
-        locateFile: (file) =>
-          `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
-      });
-
-      pose.setOptions({
-        modelComplexity: 1,
-        smoothLandmarks: true,
-        enableSegmentation: false,
-        minDetectionConfidence: 0.5,
-        minTrackingConfidence: 0.5,
-      });
-
-      pose.onResults(onResults);
-
-      if (videoRef.current) {
-        const camera = new Camera(videoRef.current, {
-          onFrame: async () => {
-            await pose.send({ image: videoRef.current });
-          },
-          width: 640,
-          height: 480,
-        });
-        camera.start();
-      }
-    };
-
-    doc
-
-
+  // Define onResults BEFORE usage
   const onResults = (results) => {
     const canvasCtx = canvasRef.current.getContext("2d");
     canvasCtx.clearRect(0, 0, 640, 480);
@@ -91,7 +46,6 @@ useEffect(() => {
       const shirtWidth = shoulderWidth * 1.8;
       const shirtHeight = height * 1.2;
 
-
       lastState.current.x = lerp(lastState.current.x, midX, 0.3);
       lastState.current.y = lerp(lastState.current.y, midY, 0.3);
       lastState.current.width = lerp(lastState.current.width, shirtWidth, 0.3);
@@ -112,6 +66,52 @@ useEffect(() => {
     }
   };
 
+  useEffect(() => {
+    const loadPoseAndStartCamera = async () => {
+      const script = document.createElement("script");
+      script.src = "https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.min.js";
+      script.async = true;
+
+      script.onload = () => {
+        const shirtImg = new Image();
+        shirtImg.src = filterImage;
+        shirtImg.onload = () => {
+          shirtImgRef.current = shirtImg;
+        };
+
+        const pose = new window.Pose({
+          locateFile: (file) =>
+            `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
+        });
+
+        pose.setOptions({
+          modelComplexity: 1,
+          smoothLandmarks: true,
+          enableSegmentation: false,
+          minDetectionConfidence: 0.5,
+          minTrackingConfidence: 0.5,
+        });
+
+        pose.onResults(onResults);
+
+        if (videoRef.current) {
+          const camera = new Camera(videoRef.current, {
+            onFrame: async () => {
+              await pose.send({ image: videoRef.current });
+            },
+            width: 640,
+            height: 480,
+          });
+          camera.start();
+        }
+      };
+
+      document.body.appendChild(script);
+    };
+
+    loadPoseAndStartCamera();
+  }, [filterImage]);
+
   return (
     <div className="relative w-full max-w-xl mx-auto">
       <video
@@ -125,11 +125,11 @@ useEffect(() => {
       />
 
       <canvas
-  ref={canvasRef}
-  width="640"
-  height="480"
-  className="rounded shadow"
-/>
+        ref={canvasRef}
+        width="640"
+        height="480"
+        className="rounded shadow"
+      />
       <button
         onClick={onClose}
         className="absolute top-2 right-2 bg-red-600 text-white px-3 py-1 rounded"
