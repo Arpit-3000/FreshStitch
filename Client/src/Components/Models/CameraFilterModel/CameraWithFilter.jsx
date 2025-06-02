@@ -1,73 +1,77 @@
 import React, { useEffect, useRef } from "react";
 import { Camera } from "@mediapipe/camera_utils";
 
-const lerp = (a, b, t) => a * (1 - t) + b * t;
-
 const CameraWithARShirt = ({ filterImage, onClose }) => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const shirtImgRef = useRef(null);
-  const lastState = useRef({ x: 320, y: 240, width: 150, height: 200 });
-
-useEffect(() => {
-  if (typeof window === "undefined") return;
-
-  const shirtImg = new Image();
-  shirtImg.src = filterImage;
-  shirtImg.onload = () => {
-    shirtImgRef.current = shirtImg;
-  };
-
   let camera = null;
-const setup = async () => {
-  const poseModule = await import("@mediapipe/pose");
-  const Pose = poseModule.default?.Pose || poseModule.Pose;
 
-  if (!Pose) {
-    console.error("Pose constructor not found in imported module:", poseModule);
-    return;
-  }
+  useEffect(() => {
+    if (typeof window === "undefined") return;
 
-  const pose = new Pose({
-    locateFile: (file) =>
-      `https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469240/${file}`,
-  });
+    const shirtImg = new Image();
+    shirtImg.src = filterImage;
+    shirtImg.onload = () => {
+      shirtImgRef.current = shirtImg;
+    };
 
-  pose.setOptions({
-    modelComplexity: 1,
-    smoothLandmarks: true,
-    enableSegmentation: false,
-    minDetectionConfidence: 0.5,
-    minTrackingConfidence: 0.5,
-  });
+    const setup = async () => {
+      try {
+        const poseModule = await import("@mediapipe/pose");
+        const Pose = poseModule.default?.Pose || poseModule.Pose;
 
-  pose.onResults(onResults);
+        if (!Pose) {
+          console.error("Pose constructor not found in imported module:", poseModule);
+          return;
+        }
 
-  if (videoRef.current) {
-    camera = new Camera(videoRef.current, {
-      onFrame: async () => {
-        await pose.send({ image: videoRef.current });
-      },
-      width: 640,
-      height: 480,
-    });
-    camera.start();
-  }
-};
+        const pose = new Pose({
+          locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
+        });
+
+        pose.setOptions({
+          modelComplexity: 1,
+          smoothLandmarks: true,
+          enableSegmentation: false,
+          minDetectionConfidence: 0.5,
+          minTrackingConfidence: 0.5,
+        });
+
+        pose.onResults(onResults);
+
+        if (videoRef.current) {
+          camera = new Camera(videoRef.current, {
+            onFrame: async () => {
+              await pose.send({ image: videoRef.current });
+            },
+            width: 640,
+            height: 480,
+          });
+          await camera.start();
+          console.log("Camera started");
+        }
+      } catch (e) {
+        console.error("Error setting up Mediapipe pose:", e);
+      }
+    };
+
+    setup();
+
+    return () => {
+      if (camera) {
+        camera.stop();
+      }
+    };
+  }, [filterImage]);
 
 
-  setup();
+   const onResults = (results) => {
+    if (!canvasRef.current) return;
 
-  return () => {
-    if (camera) camera.stop();
-  };
-}, [filterImage]);
-
-
-  const onResults = (results) => {
-    const canvasCtx = canvasRef.current.getContext("2d");
-    canvasCtx.clearRect(0, 0, 640, 480);
-    canvasCtx.drawImage(results.image, 0, 0, 640, 480);
+    const ctx = canvasRef.current.getContext("2d");
+    ctx.clearRect(0, 0, 640, 480);
+    ctx.drawImage(results.image, 0, 0, 640, 480);
 
     if (!shirtImgRef.current || !results.poseLandmarks) return;
 
@@ -113,11 +117,11 @@ const setup = async () => {
     }
   };
 
-  return (
-    <div className="relative w-full max-w-xl mx-auto">
+return (
+    <div style={{ position: "relative", maxWidth: 640, margin: "auto" }}>
       <video
         ref={videoRef}
-        className="absolute top-0 left-0"
+        style={{ position: "absolute", top: 0, left: 0 }}
         width="640"
         height="480"
         playsInline
@@ -128,11 +132,19 @@ const setup = async () => {
         ref={canvasRef}
         width="640"
         height="480"
-        className="rounded shadow relative z-10"
+        style={{ position: "relative", zIndex: 10 }}
       />
       <button
         onClick={onClose}
-        className="absolute top-2 right-2 bg-red-600 text-white px-3 py-1 rounded z-20"
+        style={{
+          position: "absolute",
+          top: 10,
+          right: 10,
+          backgroundColor: "red",
+          color: "white",
+          padding: "5px 10px",
+          zIndex: 20,
+        }}
       >
         Close
       </button>
