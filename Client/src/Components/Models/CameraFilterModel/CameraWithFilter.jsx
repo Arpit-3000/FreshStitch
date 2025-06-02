@@ -1,7 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { Camera } from "@mediapipe/camera_utils"; // This works on client
-// ❌ Do NOT import Pose statically
-// import { Pose } from "@mediapipe/pose";
+import { Camera } from "@mediapipe/camera_utils";
 
 const lerp = (a, b, t) => a * (1 - t) + b * t;
 
@@ -27,7 +25,9 @@ const CameraWithARShirt = ({ filterImage, onClose }) => {
     };
 
     const setupCameraAndPose = async () => {
-      const { Pose } = await import("@mediapipe/pose"); // ✅ dynamic import
+      // ✅ Fix: dynamic import and access `Pose` safely
+      const poseModule = await import("@mediapipe/pose");
+      const Pose = poseModule.Pose; // ✅ Safely extract constructor
 
       poseInstance = new Pose({
         locateFile: (file) =>
@@ -64,9 +64,11 @@ const CameraWithARShirt = ({ filterImage, onClose }) => {
   }, [filterImage]);
 
   const onResults = (results) => {
-    const canvasCtx = canvasRef.current.getContext("2d");
-    canvasCtx.clearRect(0, 0, 640, 480);
-    canvasCtx.drawImage(results.image, 0, 0, 640, 480);
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+
+    ctx.clearRect(0, 0, 640, 480);
+    ctx.drawImage(results.image, 0, 0, 640, 480);
 
     if (!shirtImgRef.current || !results.poseLandmarks) return;
 
@@ -84,7 +86,6 @@ const CameraWithARShirt = ({ filterImage, onClose }) => {
 
       const midX = (x1 + x2) / 2;
       const midY = (y1 + y2) / 2;
-
       const shoulderWidth = Math.abs(x2 - x1);
       const hipY = ((leftHip.y + rightHip.y) / 2) * 480;
 
@@ -100,15 +101,15 @@ const CameraWithARShirt = ({ filterImage, onClose }) => {
       const verticalOffset = -80;
       lastState.current.y += verticalOffset;
 
-      canvasCtx.globalAlpha = 0.95;
-      canvasCtx.drawImage(
+      ctx.globalAlpha = 0.95;
+      ctx.drawImage(
         shirtImgRef.current,
         lastState.current.x - lastState.current.width / 2,
         lastState.current.y,
         lastState.current.width,
         lastState.current.height
       );
-      canvasCtx.globalAlpha = 1;
+      ctx.globalAlpha = 1;
     }
   };
 
