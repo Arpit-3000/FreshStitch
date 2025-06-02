@@ -25,14 +25,18 @@ const CameraWithARShirt = ({ filterImage, onClose }) => {
     };
 
     const setupCameraAndPose = async () => {
-      // ✅ Fix: dynamic import and access `Pose` safely
-      const poseModule = await import("@mediapipe/pose");
-      const Pose = poseModule.Pose; // ✅ Safely extract constructor
+     const poseModule = await import("@mediapipe/pose");
+const Pose = poseModule.Pose || poseModule.default?.Pose;
 
-      poseInstance = new Pose({
-        locateFile: (file) =>
-          `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
-      });
+if (!Pose) {
+  console.error("Pose constructor not found in imported module:", poseModule);
+  return;
+}
+
+const poseInstance = new Pose({
+  locateFile: (file) =>
+    `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
+});
 
       poseInstance.setOptions({
         modelComplexity: 1,
