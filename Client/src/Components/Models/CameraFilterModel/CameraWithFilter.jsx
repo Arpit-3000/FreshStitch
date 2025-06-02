@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import * as mpPose from '@mediapipe/pose';
+import { Pose } from '@mediapipe/pose';
 
 import { Camera } from '@mediapipe/camera_utils';
 
@@ -25,10 +25,11 @@ const CameraWithARShirt = ({ filterImage, onClose }) => {
       shirtImgRef.current = shirtImg;
     };
 
-    const pose = new mpPose.Pose({
+    const pose = new Pose({
   locateFile: (file) =>
     `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
 });
+
 
 
     pose.setOptions({
@@ -123,11 +124,11 @@ const CameraWithARShirt = ({ filterImage, onClose }) => {
       />
 
       <canvas
-        ref={canvasRef}
-        width="840"
-        height="480"
-        className="rounded shadow"
-      />
+  ref={canvasRef}
+  width="640"
+  height="480"
+  className="rounded shadow"
+/>
       <button
         onClick={onClose}
         className="absolute top-2 right-2 bg-red-600 text-white px-3 py-1 rounded"
