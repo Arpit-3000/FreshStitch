@@ -18,11 +18,12 @@ const CameraWithARShirt = ({ filterImage, onClose }) => {
     height: 200,
   });
 
- useEffect(() => {
+useEffect(() => {
   const loadPoseAndStartCamera = async () => {
     const script = document.createElement("script");
-    script.src = "https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js";
+    script.src = "https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.min.js";
     script.async = true;
+
     script.onload = () => {
       const shirtImg = new Image();
       shirtImg.src = filterImage;
@@ -30,7 +31,7 @@ const CameraWithARShirt = ({ filterImage, onClose }) => {
         shirtImgRef.current = shirtImg;
       };
 
-      const pose = new window.Pose({
+      const pose = new window.pose.Pose({
         locateFile: (file) =>
           `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
       });
@@ -57,11 +58,8 @@ const CameraWithARShirt = ({ filterImage, onClose }) => {
       }
     };
 
-    document.body.appendChild(script);
-  };
+    doc
 
-  loadPoseAndStartCamera();
-}, [filterImage]);
 
   const onResults = (results) => {
     const canvasCtx = canvasRef.current.getContext("2d");
